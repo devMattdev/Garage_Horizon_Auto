@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ vehicule.titre }} — {{ parent() }}{% endblock %}
+
+{% block structured_data %}
+    <script type="application/ld+json">{{ donnees_structurees|json_encode|raw }}</script>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <nav aria-label="Fil d'Ariane" class="mb-3">
+            <a href="{{ path('vehicules_index') }}">&larr; Tous les véhicules</a>
+        </nav>
+
+        {% if vehicule.statut.value == 'vendu' %}
+            <div class="alert alert-secondary">Ce véhicule a été vendu.</div>
+        {% endif %}
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                {% set photos = vehicule.photosTriees %}
+                {% if photos|length > 0 %}
+                    <picture>
+                        <source srcset="{{ path('photo_vehicule', {id: photos[0].id, variante: 'detail', format: 'webp'}) }}" type="image/webp">
+                        <img src="{{ path('photo_vehicule', {id: photos[0].id, variante: 'detail', format: 'jpg'}) }}" alt="{{ photos[0].texteAlternatif }}" class="img-fluid rounded" width="1600" loading="eager">
+                    </picture>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <h1 class="h2">{{ vehicule.titre }}</h1>
+                <ul class="list-unstyled">
+                    <li><strong>Mise en circulation :</strong> {{ vehicule.misEnCirculationLe|date('m/Y') }}</li>
+                    <li><strong>Kilométrage :</strong> {{ vehicule.kilometrage|number_format(0, ',', ' ') }} km</li>
+                    <li><strong>Énergie :</strong> {{ vehicule.energie.value|capitalize }}</li>
+                    <li><strong>Boîte :</strong> {{ vehicule.boite.value|capitalize }}</li>
+                    {% if vehicule.puissanceFiscale %}<li><strong>Puissance fiscale :</strong> {{ vehicule.puissanceFiscale }} CV</li>{% endif %}
+                </ul>
+                {% if vehicule.prix %}<p class="display-6">{{ vehicule.prix|number_format(0, ',', ' ') }} €</p>{% endif %}
+
+                {% if vehicule.statut.value != 'vendu' %}
+                    <a class="btn btn-primary" href="{{ path('contact', {type: 'vehicule'}) }}">Ce véhicule m'intéresse</a>
+                {% endif %}
+
+                {% if vehicule.urlAnnonceExterne %}
+                    <a class="btn btn-outline-secondary" href="{{ vehicule.urlAnnonceExterne }}" target="_blank" rel="noopener">Voir l'annonce complète</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4">{{ vehicule.description|nl2br }}</div>
+    </div>
+{% endblock %}

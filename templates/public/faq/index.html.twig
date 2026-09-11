@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Questions fréquentes — {{ parent() }}{% endblock %}
+
+{% block structured_data %}
+    <script type="application/ld+json">{{ donnees_structurees|json_encode|raw }}</script>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="h2 mb-4">Questions fréquentes</h1>
+        <div class="accordion" id="accordionFaq">
+            {% for question in questions %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ question.id }}">
+                            {{ question.question }}
+                        </button>
+                    </h2>
+                    <div id="faq-{{ question.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionFaq">
+                        <div class="accordion-body">{{ question.reponse|nl2br }}</div>
+                    </div>
+                </div>
+            {% else %}
+                <p>Aucune question publiée pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

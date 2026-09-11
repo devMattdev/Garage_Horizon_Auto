@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="bg-light py-5">
+        <div class="container text-center">
+            <h1 class="display-5 fw-bold">{{ parametres_site().raisonSociale ?: 'Votre garage à Poissy' }}</h1>
+            <p class="lead">Entretien, mécanique, pneumatiques, contrôle technique et véhicules d'occasion.</p>
+            <a class="btn btn-primary btn-lg" href="{{ path('contact') }}">Prendre rendez-vous</a>
+            <p class="mt-3 mb-0">
+                <span class="badge {{ ouvert_maintenant ? 'text-bg-success' : 'text-bg-secondary' }}">
+                    {{ ouvert_maintenant ? 'Ouvert actuellement' : 'Fermé actuellement' }}
+                </span>
+            </p>
+        </div>
+    </section>
+
+    {% if prestations|length > 0 %}
+        <section class="container py-5">
+            <h2 class="h3 mb-4">Nos prestations</h2>
+            <div class="row g-4">
+                {% for prestation in prestations %}
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="h5 card-title">{{ prestation.nom }}</h3>
+                                <p class="card-text">{{ prestation.resume }}</p>
+                                <a class="stretched-link" href="{{ path('prestation_detail', {slug: prestation.slug}) }}">En savoir plus</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-4">
+                <a class="btn btn-outline-primary" href="{{ path('prestations_index') }}">Voir toutes les prestations</a>
+            </div>
+        </section>
+    {% endif %}
+
+    {% if vehicules|length > 0 %}
+        <section class="container py-5">
+            <h2 class="h3 mb-4">Véhicules d'occasion</h2>
+            <div class="row g-4">
+                {% for vehicule in vehicules %}
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h3 class="h5 card-title">{{ vehicule.titre }}</h3>
+                                <p class="card-text mb-1">{{ vehicule.kilometrage|number_format(0, ',', ' ') }} km — {{ vehicule.energie.value }}</p>
+                                {% if vehicule.prix %}<p class="fw-bold">{{ vehicule.prix|number_format(0, ',', ' ') }} €</p>{% endif %}
+                                <a class="stretched-link" href="{{ path('vehicule_detail', {reference: vehicule.reference}) }}">Voir la fiche</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-4">
+                <a class="btn btn-outline-primary" href="{{ path('vehicules_index') }}">Voir tous les véhicules</a>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

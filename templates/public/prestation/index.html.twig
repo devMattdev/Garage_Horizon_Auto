@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos prestations — {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="h2 mb-4">Nos prestations</h1>
+        <div class="row g-4">
+            {% for prestation in prestations %}
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="h5 card-title">{{ prestation.nom }}</h2>
+                            <p class="card-text">{{ prestation.resume }}</p>
+                            {% if prestation.tarifIndicatif %}
+                                <p class="text-muted mb-1">À partir de {{ prestation.tarifIndicatif|number_format(2, ',', ' ') }} € — devis obligatoire</p>
+                            {% endif %}
+                            <a class="stretched-link" href="{{ path('prestation_detail', {slug: prestation.slug}) }}">En savoir plus</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>Aucune prestation publiée pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

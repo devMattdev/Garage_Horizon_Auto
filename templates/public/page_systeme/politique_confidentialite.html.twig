@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité — {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5" style="max-width: 720px;">
+        <h1 class="h2 mb-4">Politique de confidentialité</h1>
+
+        <div class="alert alert-warning">
+            Contenu à finaliser avant mise en ligne — back.md section 24, point 6 : les
+            obligations d'information, la base légale du traitement des demandes et le
+            recueil du consentement pour les relances commerciales doivent être vérifiés
+            auprès des sources officielles (CNIL) avant rédaction définitive.
+        </div>
+
+        <h2 class="h5 mt-4">Données collectées</h2>
+        <p>
+            Lors de l'envoi du formulaire de contact : nom, téléphone et/ou courriel,
+            immatriculation et kilométrage (facultatifs), message. Ces données sont
+            nécessaires au traitement de votre demande.
+        </p>
+
+        <h2 class="h5 mt-4">Durée de conservation</h2>
+        <p>
+            Les demandes sont conservées 12 mois à compter de leur réception, puis
+            supprimées automatiquement.
+        </p>
+
+        <h2 class="h5 mt-4">Vos droits</h2>
+        <p>
+            Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de
+            suppression de vos données. Pour l'exercer, contactez-nous à l'adresse
+            {{ parametres.email }}.
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ prestation.seoTitre ?: prestation.nom }} — {{ parent() }}{% endblock %}
+{% block meta_description %}{{ prestation.seoDescription ?: prestation.resume }}{% endblock %}
+
+{% block structured_data %}
+    <script type="application/ld+json">{{ donnees_structurees|json_encode|raw }}</script>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <nav aria-label="Fil d'Ariane" class="mb-3">
+            <a href="{{ path('prestations_index') }}">&larr; Toutes les prestations</a>
+        </nav>
+        <h1 class="h2">{{ prestation.nom }}</h1>
+        <p class="lead">{{ prestation.resume }}</p>
+        <div>{{ prestation.description|nl2br }}</div>
+
+        {% if prestation.tarifIndicatif %}
+            <p class="mt-3">
+                <strong>Forfait indicatif : {{ prestation.tarifIndicatif|number_format(2, ',', ' ') }} €</strong>
+                <br>
+                <small class="text-muted">{{ prestation.mentionTarif ?: 'Prix d\'appel non contractuel, toujours suivi d\'un devis.' }}</small>
+            </p>
+        {% endif %}
+
+        <a class="btn btn-primary mt-3" href="{{ path('contact', {type: 'devis'}) }}">Demander un devis pour cette prestation</a>
+    </div>
+{% endblock %}

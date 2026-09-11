@@ -1,0 +1,121 @@
+name: CI
+
+# back.md section 19 "Qualite de code" : PHP-CS-Fixer (@Symfony), PHPStan niveau 8,
+# Twig CS Fixer, composer audit, lint:twig, lint:container, doctrine:schema:validate,
+# tous executes en integration continue a chaque poussee, bloquants sur la branche
+# principale.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PHP_VERSION: "8.4"
+  APP_ENV: test
+  # doctrine.yaml ajoute un dbname_suffix "_test" en environnement de test
+  # (support ParaTest) : la base reellement utilisee par PHPUnit est "app_test",
+  # creee explicitement par l'etape "doctrine:database:create" ci-dessous. On utilise
+  # ici le compte root du service MySQL ephemere de la CI (privileges suffisants pour
+  # creer la base "app_test", ce que le compte applicatif "app" n'a pas) : sans lien
+  # avec les identifiants de production, definis en secrets sur le serveur de deploiement.
+  DATABASE_URL: "mysql://root:root@127.0.0.1:3306/app?serverVersion=8.4.0&charset=utf8mb4"
+
+jobs:
+  quality:
+    name: Qualite de code et tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: app
+          MYSQL_USER: app
+          MYSQL_PASSWORD: app
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+          --health-start-period=30s
+
+    steps:
+      - name: Recuperation du code
+        uses: actions/checkout@v4
+
+      - name: Installation de PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: pdo_mysql, intl, opcache, zip, gd, ctype, iconv
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache des dependances Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: composer install
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: composer audit (A06 - composants vulnerables, back.md 7.2)
+        run: composer audit --no-interaction
+
+      - name: PHP-CS-Fixer (regles @Symfony)
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
+
+      - name: PHPStan niveau 8 (src + tests)
+        run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --no-progress
+
+      - name: Twig CS Fixer (templates) - TODO
+        # Verifie le 2026-09-11 : `npx --yes twig-cs-fixer` echoue avec un 404, il
+        # n'existe pas de paquet npm nomme "twig-cs-fixer" (verification faite aupres
+        # du registre npm avant d'ecrire cette etape, pour ne pas ajouter un appel
+        # voue a l'echec). L'outil correspondant au cahier des charges est le paquet
+        # Composer vincentlanglet/twig-cs-fixer.
+        # TODO equipe applicative : `composer require --dev vincentlanglet/twig-cs-fixer`
+        # (hors perimetre de cette tache d'infrastructure, qui ne doit pas modifier
+        # composer.json) puis remplacer cette etape par :
+        #   vendor/bin/twig-cs-fixer lint templates
+        run: echo "twig-cs-fixer non installe (paquet Composer a ajouter par l'equipe applicative) - etape ignoree, voir commentaire ci-dessus."
+
+      - name: Symfony bin/console lint:twig
+        run: |
+          if [ -d templates ] && [ -n "$(find templates -type f -name '*.twig' -print -quit)" ]; then
+            php bin/console lint:twig templates --env=test
+          else
+            echo "Repertoire templates/ vide ou absent : etape ignoree."
+          fi
+
+      - name: Symfony bin/console lint:container
+        run: php bin/console lint:container --env=test
+
+      - name: Attente de la disponibilite de MySQL
+        run: |
+          for i in $(seq 1 30); do
+            mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot --silent && break
+            sleep 2
+          done
+
+      - name: Doctrine - creation de la base de test (app_test)
+        run: php bin/console doctrine:database:create --env=test --if-not-exists
+
+      - name: Doctrine - execution des migrations
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Doctrine - validation du schema
+        run: php bin/console doctrine:schema:validate --env=test
+
+      - name: PHPUnit (unitaire, fonctionnel, integration - back.md section 18)
+        run: vendor/bin/simple-phpunit --configuration=phpunit.dist.xml

@@ -1,0 +1,64 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Tableau de bord{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card text-bg-primary">
+                <div class="card-body">
+                    <h2 class="mb-0">{{ demandes_non_traitees }}</h2>
+                    <p class="mb-0">Demandes non traitées</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-0">{{ demandes_semaine }}</h2>
+                    <p class="mb-0">Demandes de la semaine</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card {{ vehicules_obsoletes > 0 ? 'text-bg-warning' }}">
+                <div class="card-body">
+                    <h2 class="mb-0">{{ vehicules_obsoletes }}</h2>
+                    <p class="mb-0">Véhicules publiés depuis plus de 60 jours</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-0">{{ prochains_rendez_vous|length }}</h2>
+                    <p class="mb-0">Prochains rendez-vous confirmés</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if prochains_rendez_vous|length > 0 %}
+        <h3 class="h5">Prochains rendez-vous</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Nom</th>
+                    <th>Téléphone</th>
+                    <th>Courriel</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for demande in prochains_rendez_vous %}
+                    <tr>
+                        <td>{{ demande.rdvConfirmeLe ? demande.rdvConfirmeLe|date('d/m/Y H:i') : '' }}</td>
+                        <td>{{ demande.nom }}</td>
+                        <td>{{ demande.telephone }}</td>
+                        <td>{{ demande.email }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

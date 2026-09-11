@@ -1,0 +1,13 @@
+<h1>Nouvelle demande — {{ demande.type.value }}</h1>
+<ul>
+    <li><strong>Nom :</strong> {{ demande.nom }}</li>
+    {% if demande.telephone %}<li><strong>Téléphone :</strong> {{ demande.telephone }}</li>{% endif %}
+    {% if demande.email %}<li><strong>Courriel :</strong> {{ demande.email }}</li>{% endif %}
+    {% if demande.immatriculation %}<li><strong>Immatriculation :</strong> {{ demande.immatriculation }}</li>{% endif %}
+    {% if demande.kilometrage %}<li><strong>Kilométrage :</strong> {{ demande.kilometrage }} km</li>{% endif %}
+    {% if demande.prestation %}<li><strong>Prestation :</strong> {{ demande.prestation.nom }}</li>{% endif %}
+    {% if demande.vehicule %}<li><strong>Véhicule :</strong> {{ demande.vehicule.titre }}</li>{% endif %}
+    {% if demande.creneauSouhaite %}<li><strong>Créneau souhaité :</strong> {{ demande.creneauSouhaite }}</li>{% endif %}
+</ul>
+{% if demande.message %}<p><strong>Message :</strong><br>{{ demande.message|nl2br }}</p>{% endif %}
+<p><a href="{{ url('admin_dashboard') }}">Ouvrir dans le back-office</a></p>

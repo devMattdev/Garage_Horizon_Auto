@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{{ parametres_site().raisonSociale ?: 'Horizon Auto' }}{% endblock %}</title>
+        <meta name="description" content="{% block meta_description %}Garage automobile à Poissy : entretien, mécanique, pneumatiques, contrôle technique et véhicules d'occasion.{% endblock %}">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🚗</text></svg>">
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {% endblock %}
+
+        {% block structured_data %}{% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        {% set bandeau = bandeau_actif() %}
+        {% if bandeau %}
+            <div class="bandeau-exceptionnel {{ bandeau.niveau.value == 'attention' ? 'bg-warning' : 'bg-info' }}">
+                {{ bandeau.message }}
+            </div>
+        {% endif %}
+
+        <header class="border-bottom bg-white">
+            <nav class="navbar navbar-expand-lg container py-3">
+                <a class="navbar-brand fw-bold" href="{{ path('accueil') }}">{{ parametres_site().raisonSociale ?: 'Horizon Auto' }}</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPrincipale" aria-controls="navPrincipale" aria-expanded="false" aria-label="Ouvrir la navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navPrincipale">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        <li class="nav-item"><a class="nav-link" href="{{ path('prestations_index') }}">Prestations</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ path('vehicules_index') }}">Véhicules d'occasion</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ path('faq') }}">FAQ</a></li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary ms-lg-2" href="{{ path('contact') }}">Prendre rendez-vous</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="container mt-3">
+                        <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }}">{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="bg-dark text-white-50 py-5 mt-5">
+            <div class="container row gy-4">
+                <div class="col-md-4">
+                    <h2 class="h5 text-white">{{ parametres_site().raisonSociale }}</h2>
+                    <p class="mb-1">{{ parametres_site().adresse }}</p>
+                    <p class="mb-1">{{ parametres_site().codePostal }} {{ parametres_site().ville }}</p>
+                    <p class="mb-1">{{ parametres_site().telephone }}</p>
+                    <p class="mb-0">{{ garage_ouvert() ? 'Ouvert actuellement' : 'Actuellement fermé' }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h2 class="h6 text-white">Le garage</h2>
+                    <ul class="list-unstyled">
+                        <li><a class="link-light" href="{{ path('prestations_index') }}">Prestations</a></li>
+                        <li><a class="link-light" href="{{ path('vehicules_index') }}">Véhicules d'occasion</a></li>
+                        <li><a class="link-light" href="{{ path('faq') }}">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h2 class="h6 text-white">Informations légales</h2>
+                    <ul class="list-unstyled">
+                        <li><a class="link-light" href="{{ path('mentions_legales') }}">Mentions légales</a></li>
+                        <li><a class="link-light" href="{{ path('politique_confidentialite') }}">Politique de confidentialité</a></li>
+                        <li><a class="link-light" href="{{ path('declaration_accessibilite') }}">Accessibilité</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

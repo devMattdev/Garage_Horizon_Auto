@@ -1,0 +1,7 @@
+<h1>Fiches véhicules potentiellement obsolètes</h1>
+<p>Les véhicules suivants sont publiés depuis plus de 60 jours sans modification (RG-06) :</p>
+<ul>
+    {% for vehicule in vehicules %}
+        <li>{{ vehicule.titre }} ({{ vehicule.reference }}) — publié le {{ vehicule.publieLe ? vehicule.publieLe|date('d/m/Y') : '—' }}</li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block content_title %}Back-office{% endblock %} — Horizon Auto</title>
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {{ importmap('app') }}
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="{{ path('admin_dashboard') }}">Horizon Auto — back-office</a>
+            </div>
+        </nav>
+
+        <div class="container pb-5">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }}">{{ message }}</div>
+                {% endfor %}
+            {% endfor %}
+
+            <h1 class="h3 mb-4">{{ block('content_title') }}</h1>
+
+            {% block main %}{% endblock %}
+        </div>
+    </body>
+</html>

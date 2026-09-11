@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page.seoTitre ?: page.titre }} — {{ parent() }}{% endblock %}
+{% block meta_description %}{{ page.seoDescription ?: '' }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="h2 mb-4">{{ page.titre }}</h1>
+        <div>{{ page.contenu|nl2br }}</div>
+        <a class="btn btn-primary mt-4" href="{{ path('contact') }}">Prendre rendez-vous</a>
+    </div>
+{% endblock %}

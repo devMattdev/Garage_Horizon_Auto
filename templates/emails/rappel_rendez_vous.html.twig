@@ -1,0 +1,4 @@
+<p>Bonjour {{ demande.nom }},</p>
+<p>Nous vous rappelons votre rendez-vous prévu le <strong>{{ demande.rdvConfirmeLe|date('d/m/Y à H:i') }}</strong>.</p>
+{% if demande.prestation %}<p>Prestation concernée : {{ demande.prestation.nom }}</p>{% endif %}
+<p>Merci de nous prévenir en cas d'empêchement.</p>

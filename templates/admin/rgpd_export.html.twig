@@ -1,0 +1,32 @@
+{% extends 'admin/_layout.html.twig' %}
+
+{% block content_title %}Export RGPD{% endblock %}
+
+{% block main %}
+    <p class="text-muted">Exercice du droit d'accès : recherche des demandes liées à une adresse courriel ou un numéro de téléphone.</p>
+
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-auto">
+            <input type="email" name="email" class="form-control" placeholder="Adresse courriel" value="{{ email }}">
+        </div>
+        <div class="col-auto">
+            <input type="text" name="telephone" class="form-control" placeholder="Téléphone" value="{{ telephone }}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </div>
+        {% if email or telephone %}
+            <div class="col-auto">
+                <a class="btn btn-outline-secondary" href="{{ path('admin_rgpd_export', {email: email, telephone: telephone, format: 'json'}) }}">Télécharger en JSON</a>
+            </div>
+        {% endif %}
+    </form>
+
+    {% if donnees is not null %}
+        {% if donnees|length == 0 %}
+            <p>Aucune demande trouvée.</p>
+        {% else %}
+            <pre class="bg-light p-3 rounded">{{ donnees|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE')) }}</pre>
+        {% endif %}
+    {% endif %}
+{% endblock %}

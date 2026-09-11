@@ -1,0 +1,29 @@
+includes:
+	- vendor/phpstan/phpstan-symfony/extension.neon
+	- vendor/phpstan/phpstan-symfony/rules.neon
+	- vendor/phpstan/phpstan-doctrine/extension.neon
+	- vendor/phpstan/phpstan-doctrine/rules.neon
+
+parameters:
+	level: 8
+
+	paths:
+		- src
+		- tests
+
+	excludePaths:
+		- tests/bootstrap.php
+
+	tmpDir: var/cache/phpstan
+
+	# Le conteneur compile n'est pas garanti d'exister (ex. premiere execution
+	# en integration continue) : phpstan-symfony fonctionne alors en mode degrade.
+	# symfony:
+	#     container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
+
+	# phpstan-doctrine peut analyser les repositories/QueryBuilder plus finement
+	# avec un bootstrap qui fournit l'ObjectManager (voir doc phpstan-doctrine).
+	# Non active ici pour ne pas dependre du kernel applicatif dans cette
+	# configuration d'infrastructure ; a activer par l'equipe applicative si besoin :
+	# doctrine:
+	#     objectManagerLoader: tests/phpstan/object-manager.php

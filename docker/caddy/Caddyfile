@@ -1,0 +1,28 @@
+# Garage Horizon Auto — Caddyfile de developpement
+#
+# Sert public/ en statique et transmet le PHP au service "php" (php-fpm, port 9000)
+# via FastCGI. Pas de TLS ici : en local, HTTP suffit (back.md 5.1/20 reserve
+# Let's Encrypt a la production, geree hors de ce docker-compose de dev).
+
+{
+	auto_https off
+	admin off
+}
+
+:80 {
+	root * /var/www/html/public
+
+	encode zstd gzip
+
+	php_fastcgi php:9000 {
+		# Le front controller Symfony
+		resolve_root_symlink
+	}
+
+	file_server
+
+	log {
+		output stdout
+		format console
+	}
+}

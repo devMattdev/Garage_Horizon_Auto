@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales — {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5" style="max-width: 720px;">
+        <h1 class="h2 mb-4">Mentions légales</h1>
+
+        {% if app.debug %}
+            <div class="alert alert-warning">
+                Contenu provisoire — back.md section 24 précise que la rédaction définitive
+                (obligations d'information, base légale du traitement, durée de conservation)
+                doit être vérifiée auprès des sources officielles (CNIL) avant mise en ligne.
+            </div>
+        {% endif %}
+
+        <h2 class="h5 mt-4">Éditeur du site</h2>
+        <p>
+            {{ parametres.raisonSociale }}<br>
+            {{ parametres.adresse }}, {{ parametres.codePostal }} {{ parametres.ville }}<br>
+            SIRET : {{ parametres.siret }}<br>
+            Téléphone : {{ parametres.telephone }}<br>
+            Courriel : {{ parametres.email }}
+        </p>
+
+        <h2 class="h5 mt-4">Hébergement</h2>
+        <p>VPS OVHcloud — 2 rue Kellermann, 59100 Roubaix, France.</p>
+
+        <h2 class="h5 mt-4">Directeur de la publication</h2>
+        <p>Le représentant légal de {{ parametres.raisonSociale }}.</p>
+    </div>
+{% endblock %}

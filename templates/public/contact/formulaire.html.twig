@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact — {{ parent() }}{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-5" style="max-width: 720px;">
+        <h1 class="h2 mb-4">Nous contacter</h1>
+        <p class="text-muted">
+            {{ parametres_site().raisonSociale }} — {{ parametres_site().telephone }}<br>
+            Réponse sous {{ parametres_site().delaiReponseJoursOuvres }} jours ouvrés.
+        </p>
+
+        {{ form_start(form) }}
+            {{ form_row(form.type) }}
+            {{ form_row(form.nom) }}
+            <div class="row">
+                <div class="col-md-6">{{ form_row(form.telephone) }}</div>
+                <div class="col-md-6">{{ form_row(form.email) }}</div>
+            </div>
+            {{ form_row(form.immatriculation) }}
+            {{ form_row(form.kilometrage) }}
+            {{ form_row(form.prestation) }}
+            {{ form_row(form.vehicule) }}
+            {{ form_row(form.creneauSouhaite) }}
+            {{ form_row(form.message) }}
+            {{ form_row(form.consentementRelance) }}
+
+            <div style="position: absolute; left: -9999px;" aria-hidden="true">
+                {{ form_label(form.siteWeb, 'Ne pas remplir ce champ', {label_attr: {for: 'demande_siteWeb'}}) }}
+                {{ form_widget(form.siteWeb, {attr: {tabindex: '-1', autocomplete: 'off'}}) }}
+            </div>
+
+            <div class="cf-turnstile mb-3" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileSuccess"></div>
+            {{ form_widget(form.cfTurnstileResponse, {attr: {id: 'demande_cfTurnstileResponseHidden', type: 'hidden'}}) }}
+
+            <button type="submit" class="btn btn-primary">Envoyer ma demande</button>
+        {{ form_end(form) }}
+    </div>
+
+    <script>
+        function onTurnstileSuccess(token) {
+            document.getElementById('demande_cfTurnstileResponseHidden').value = token;
+        }
+    </script>
+{% endblock %}

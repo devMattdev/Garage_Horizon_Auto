@@ -1,0 +1,71 @@
+# Garage Horizon Auto — worker Symfony Messenger supervise par systemd
+#
+# back.md section 11 : "Symfony Messenger, transport Doctrine (table messenger_messages),
+# un worker supervise par systemd avec redemarrage automatique."
+# back.md section 20 : sequence de deploiement -> "redemarrage du worker" apres migration/cache.
+#
+# Installation sur le VPS de production :
+#   1. Copier ce fichier vers /etc/systemd/system/messenger-worker.service
+#      (adapter WorkingDirectory / ExecStart au chemin reel de deploiement)
+#   2. sudo systemctl daemon-reload
+#   3. sudo systemctl enable --now messenger-worker.service
+#
+# Le fichier n'est PAS active tel quel (extension .example) : il documente la
+# configuration attendue et sert de modele, a copier/adapter lors du deploiement
+# (voir docs/deploiement.md).
+#
+# --time-limit=3600 : le worker se termine proprement au bout d'une heure, systemd
+# le redemarre aussitot (Restart=always) — evite l'accumulation de fuites memoire
+# sur un process long-vivant, et recharge le code deploye a chaque redemarrage.
+# La file "failed" est consommee dans la meme commande pour que les messages en
+# echec definitif restent visibles au monitoring (voir back.md section 11 et 22),
+# sans nouvelle tentative automatique sur cette file.
+
+[Unit]
+Description=Garage Horizon Auto - Symfony Messenger worker (async + failed + scheduler_default)
+After=network.target mysql.service docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+
+# Chemin de deploiement reel sur le VPS (a adapter)
+WorkingDirectory=/srv/garage-horizon-auto/current
+
+# Le worker tourne dans le conteneur applicatif "php" de la stack de production
+# (docker compose -f docker-compose.prod.yaml, hors perimetre de ce depot de dev).
+# `docker compose exec` echoue si le conteneur est indisponible : systemd redemarre
+# alors le service selon RestartSec/StartLimit ci-dessous.
+#
+# "scheduler_default" est le transport interne genere par #[AsSchedule] (src/Schedule.php,
+# nom par defaut "default") : c'est lui qui declenche les RecurringMessage aux horaires
+# configures (rappels J-1, purge RGPD, retrait VO vendus, alerte fiches obsoletes, sitemap).
+# Sans ce transport dans la commande, aucune tache planifiee ne se declenche.
+ExecStart=/usr/bin/docker compose -f /srv/garage-horizon-auto/current/docker-compose.prod.yaml \
+    exec -T php \
+    bin/console messenger:consume async failed scheduler_default --time-limit=3600 --memory-limit=256M -vv
+
+# Redemarrage automatique en cas d'arret (normal via --time-limit, ou anormal)
+Restart=always
+RestartSec=5
+
+# Le SIGTERM laisse a Messenger le temps de terminer le message en cours avant
+# de couper la connexion au transport Doctrine (arret "propre").
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Garde-fou : si le worker crashe en boucle (ex. base indisponible), on cesse de
+# le relancer pendant 5 minutes plutot que de saturer les tentatives de connexion.
+StartLimitIntervalSec=300
+StartLimitBurst=10
+
+# Les journaux du worker remontent dans journald ; a agreger avec Sentry / les
+# logs applicatifs (canal "app", back.md section 17) pour la supervision.
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=garage-horizon-auto-messenger-worker
+
+[Install]
+WantedBy=multi-user.target

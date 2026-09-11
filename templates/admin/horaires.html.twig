@@ -1,0 +1,35 @@
+{% extends 'admin/_layout.html.twig' %}
+
+{% block content_title %}Horaires{% endblock %}
+
+{% block main %}
+    {% set jours = {1: 'Lundi', 2: 'Mardi', 3: 'Mercredi', 4: 'Jeudi', 5: 'Vendredi', 6: 'Samedi', 7: 'Dimanche'} %}
+
+    {{ form_start(form) }}
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Jour</th>
+                    <th>Matin — début</th>
+                    <th>Matin — fin</th>
+                    <th>Après-midi — début</th>
+                    <th>Après-midi — fin</th>
+                    <th>Fermé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for numeroJour, plageForm in form.plages %}
+                    <tr>
+                        <td>{{ jours[numeroJour] }}</td>
+                        <td>{{ form_widget(plageForm.matinDebut) }}</td>
+                        <td>{{ form_widget(plageForm.matinFin) }}</td>
+                        <td>{{ form_widget(plageForm.apremDebut) }}</td>
+                        <td>{{ form_widget(plageForm.apremFin) }}</td>
+                        <td>{{ form_widget(plageForm.ferme) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    {{ form_end(form) }}
+{% endblock %}

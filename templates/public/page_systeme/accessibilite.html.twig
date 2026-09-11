@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Déclaration d'accessibilité — {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5" style="max-width: 720px;">
+        <h1 class="h2 mb-4">Déclaration d'accessibilité</h1>
+
+        <div class="alert alert-warning">
+            Déclaration à établir après l'audit d'accessibilité prévu en recette
+            (back.md section 18 et 26, étape 12) : contrastes, navigation clavier,
+            hiérarchie des titres, vérification au lecteur d'écran.
+        </div>
+
+        <p>
+            {{ parametres_site().raisonSociale }} s'engage à rendre ce site accessible
+            conformément aux exigences applicables. Cette déclaration sera complétée
+            après l'audit d'accessibilité mené avant la mise en ligne.
+        </p>
+    </div>
+{% endblock %}

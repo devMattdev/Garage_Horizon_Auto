@@ -1,0 +1,78 @@
+# Garage Horizon Auto — environnement de developpement local (back.md section 20 : "Local | Developpement | Docker Compose")
+#
+# Services :
+#   - php   : php-fpm 8.4 (docker/php/Dockerfile, stage "dev")
+#   - caddy : serveur web, sert public/ et transmet le PHP en FastCGI vers php:9000
+#   - mysql : MySQL 8.4, identifiants alignes sur DATABASE_URL de .env (db "app", user "app")
+#
+# Ce fichier est distinct de compose.yaml / compose.override.yaml (generes par les
+# recipes Symfony Flex, qui ciblent Postgres) : il n'y touche pas. Lancer cet
+# environnement avec :
+#   docker compose -f docker-compose.yaml up -d --build
+#
+# Acces :
+#   - Site : http://localhost:8080
+#   - MySQL est aussi publie sur 127.0.0.1:3306, donc DATABASE_URL de .env
+#     (mysql://app:!ChangeMe!@127.0.0.1:3306/app...) fonctionne aussi bien depuis
+#     un PHP lance directement sur l'hote (ex. wamp) que depuis le conteneur php,
+#     qui recoit en plus .env.docker (voir ce fichier) pour utiliser le nom de
+#     service "mysql" au lieu de "127.0.0.1".
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: dev
+    volumes:
+      - ./:/var/www/html:cached
+    env_file:
+      - .env.docker
+    environment:
+      APP_ENV: dev
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./public:/var/www/html/public:ro
+    depends_on:
+      - php
+    networks:
+      - app
+
+  mysql:
+    image: mysql:8.4
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: "!ChangeMe!"
+      MYSQL_ROOT_PASSWORD: "!ChangeMeRoot!"
+    ports:
+      # Publie sur l'hote pour correspondre a DATABASE_URL de .env (127.0.0.1:3306)
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "app", "-p!ChangeMe!"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks:
+      - app
+
+volumes:
+  mysql_data:
+
+networks:
+  app:
+    driver: bridge

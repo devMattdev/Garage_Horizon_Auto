@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Repository;
+
+use App\Entity\Vehicule;
+use App\Enum\StatutVehicule;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @extends ServiceEntityRepository<Vehicule>
+ */
+class VehiculeRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Vehicule::class);
+    }
+
+    /**
+     * @return Vehicule[]
+     */
+    public function findPublies(): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.statut = :statut')
+            ->setParameter('statut', StatutVehicule::PUBLIE)
+            ->orderBy('v.publieLe', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Vehicule[]
+     */
+    public function findVendusDepuisPlusDe(\DateTimeImmutable $seuil): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.statut = :statut')
+            ->andWhere('v.modifieLe < :seuil')
+            ->setParameter('statut', StatutVehicule::VENDU)
+            ->setParameter('seuil', $seuil)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Vehicule[]
+     */
+    public function findPubliesSansModificationDepuis(\DateTimeImmutable $seuil): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.statut = :statut')
+            ->andWhere('v.modifieLe < :seuil')
+            ->setParameter('statut', StatutVehicule::PUBLIE)
+            ->setParameter('seuil', $seuil)
+            ->getQuery()
+            ->getResult();
+    }
+}
