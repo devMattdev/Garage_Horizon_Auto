@@ -6,11 +6,13 @@
     <div class="container py-5 container-etroit">
         <h1 class="h2 mb-4">Déclaration d'accessibilité</h1>
 
-        <div class="alert alert-warning">
-            Déclaration à établir après l'audit d'accessibilité prévu en recette
-            (back.md section 18 et 26, étape 12) : contrastes, navigation clavier,
-            hiérarchie des titres, vérification au lecteur d'écran.
-        </div>
+        {% if app.debug %}
+            <div class="alert alert-warning">
+                Déclaration à établir après l'audit d'accessibilité prévu en recette
+                (back.md section 18 et 26, étape 12) : contrastes, navigation clavier,
+                hiérarchie des titres, vérification au lecteur d'écran.
+            </div>
+        {% endif %}
 
         <p>
             {{ parametres_site().raisonSociale }} s'engage à rendre ce site accessible

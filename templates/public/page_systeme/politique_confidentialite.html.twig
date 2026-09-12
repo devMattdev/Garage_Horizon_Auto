@@ -6,12 +6,14 @@
     <div class="container py-5 container-etroit">
         <h1 class="h2 mb-4">Politique de confidentialité</h1>
 
-        <div class="alert alert-warning">
-            Contenu à finaliser avant mise en ligne — back.md section 24, point 6 : les
-            obligations d'information, la base légale du traitement des demandes et le
-            recueil du consentement pour les relances commerciales doivent être vérifiés
-            auprès des sources officielles (CNIL) avant rédaction définitive.
-        </div>
+        {% if app.debug %}
+            <div class="alert alert-warning">
+                Contenu provisoire — back.md section 24, point 6 : les obligations
+                d'information, la base légale du traitement des demandes et le recueil du
+                consentement pour les relances commerciales doivent être vérifiés auprès
+                des sources officielles (CNIL) avant rédaction définitive.
+            </div>
+        {% endif %}
 
         <h2 class="h5 mt-4">Données collectées</h2>
         <p>
