@@ -43,7 +43,14 @@ RUN apk add --no-cache \
         opcache \
         zip \
         gd \
+    && pecl install apcu \
+    && docker-php-ext-enable apcu \
     && apk del .build-deps
+
+# APCu pour le cache de metadonnees/requetes Doctrine et le cache systeme Symfony
+# (back.md section 3 et 12) : desactive en CLI par defaut (apc.enable_cli=0), Symfony
+# retombe alors automatiquement sur un cache fichiers pour les commandes console.
+COPY docker/php/conf.d/apcu.ini /usr/local/etc/php/conf.d/zz-apcu.ini
 
 WORKDIR /var/www/html
 
