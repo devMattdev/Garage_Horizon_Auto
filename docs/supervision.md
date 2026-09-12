@@ -18,9 +18,10 @@ Aucune de ces sondes ne dépend d'une intégration bloquante (back.md section 23
 
 ## 2. Checklist de mise en place (avant mise en ligne)
 
-- [ ] **UptimeRobot** : moniteur HTTP(S) configuré sur l'URL publique du site, intervalle le plus court disponible au palier gratuit, alerte configurée à 2 échecs consécutifs, notification par courriel (et SMS si le palier le permet) vers le gérant et l'équipe technique.
+- [ ] **UptimeRobot** : moniteur HTTP(S) configuré sur l'URL publique `/health`, intervalle le plus court disponible au palier gratuit, alerte configurée à 2 échecs consécutifs, notification par courriel (et SMS si le palier le permet) vers le gérant et l'équipe technique.
 - [ ] **UptimeRobot — certificat TLS** : sonde dédiée à l'expiration du certificat (fonctionnalité native UptimeRobot sur un moniteur HTTPS), seuil à 14 jours avant échéance.
-- [ ] **Sentry** : SDK Symfony installé et configuré (DSN en variable d'environnement, jamais committé), environnement (`prod`/`recette`) correctement distingué, règle d'alerte sur tout événement de niveau `error` et au-dessus, contexte anonymisé (back.md A09 : aucune donnée personnelle — immatriculation, courriel, téléphone — dans les traces envoyées à Sentry, comme dans les logs applicatifs).
+- [x] **Sentry — application** : SDK Symfony installé, désactivé lorsque `SENTRY_DSN` est vide, environnement (`prod`/`recette`) distingué automatiquement, données personnelles et corps de requête désactivés, erreurs 403/404 ignorées. Le DSN reste un secret d'exploitation.
+- [ ] **Sentry — compte** : projet créé, `SENTRY_DSN` injecté sur le serveur et règle d'alerte configurée sur tout événement de niveau `error` et au-dessus.
 - [ ] **Espace disque** : script cron sur le VPS (ex. `df` sur le point de montage applicatif), seuil 80 %, envoi d'un courriel d'alerte à l'équipe technique ; à exécuter au minimum quotidiennement.
 - [ ] **File Messenger** : requête planifiée (cron ou Symfony Scheduler) comptant les lignes de la table `messenger_messages` pour la file `async` non encore consommées ; alerte si plus de 50 messages en attente — un volume élevé indique un worker arrêté ou en échec (voir `docker/systemd/messenger-worker.service.example`).
 - [ ] **Fraîcheur des sauvegardes** : vérification quotidienne que le dernier objet de sauvegarde (base + photos) dans le stockage OVHcloud date de moins de 36 h ; alerte courriel sinon. Voir `docs/sauvegarde.md`.

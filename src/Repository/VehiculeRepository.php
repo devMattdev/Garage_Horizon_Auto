@@ -27,7 +27,7 @@ class VehiculeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('v')
             ->andWhere('v.statut = :statut')
             ->setParameter('statut', StatutVehicule::PUBLIE)
-            ->orderBy('v.publieLe', 'DESC')
+            ->orderBy('v.publieLe', \SortDirection::Descending)
             ->getQuery()
             ->getResult();
     }

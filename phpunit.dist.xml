@@ -34,9 +34,12 @@
         <testsuite name="Integration">
             <directory>tests/Integration</directory>
         </testsuite>
+        <testsuite name="End-to-end">
+            <directory>tests/EndToEnd</directory>
+        </testsuite>
     </testsuites>
 
-    <source ignoreSuppressionOfDeprecations="true">
+    <source ignoreSuppressionOfDeprecations="true" ignoreIndirectDeprecations="true">
         <include>
             <directory>src</directory>
         </include>

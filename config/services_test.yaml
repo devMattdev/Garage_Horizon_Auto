@@ -1,0 +1,4 @@
+services:
+    App\Service\Antiabus\TurnstileValidator:
+        class: App\Tests\Double\AlwaysValidTurnstileValidator
+        public: true

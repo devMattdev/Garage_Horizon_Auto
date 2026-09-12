@@ -8,6 +8,8 @@
 /var/
 /var/photos/
 /vendor/
+/drivers/
+/node_modules/
 ###< symfony/framework-bundle ###
 
 ###> symfony/asset-mapper ###

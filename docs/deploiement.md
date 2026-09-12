@@ -61,7 +61,7 @@ Chaque étape est bloquante : en cas d'échec, on s'arrête et on ne poursuit pa
    Voir `docker/systemd/messenger-worker.service.example` pour le modèle d'unité systemd. Le worker consomme les files `async` et `failed` (`bin/console messenger:consume async failed --time-limit=3600`) ; il doit repartir avec le code fraîchement déployé, jamais avec l'ancien binaire encore chargé en mémoire.
 
 8. **Vérification de santé (health check)**
-   - Requête HTTP sur une route de santé (ou la page d'accueil) : code 200 attendu.
+   - Requête HTTP sur `/health` : code 200 et corps JSON `{"status":"ok"}` attendus. Cette sonde vérifie aussi la connexion à MySQL sans exposer de détail d'infrastructure.
    - Vérification que `doctrine:schema:validate` ne signale pas de dérive.
    - Vérification dans Sentry qu'aucune erreur de niveau `error` n'apparaît dans les minutes suivant le déploiement.
    - Vérification visuelle rapide du site (accessibilité de `/admin`, formulaire de contact).

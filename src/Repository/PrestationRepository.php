@@ -25,8 +25,8 @@ class PrestationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.actif = true')
-            ->orderBy('p.ordre', 'ASC')
-            ->addOrderBy('p.nom', 'ASC')
+            ->orderBy('p.ordre', \SortDirection::Ascending)
+            ->addOrderBy('p.nom', \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }

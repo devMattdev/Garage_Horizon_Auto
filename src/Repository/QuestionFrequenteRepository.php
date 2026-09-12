@@ -25,7 +25,7 @@ class QuestionFrequenteRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('q')
             ->andWhere('q.actif = true')
-            ->orderBy('q.ordre', 'ASC')
+            ->orderBy('q.ordre', \SortDirection::Ascending)
             ->getQuery()
             ->getResult();
     }

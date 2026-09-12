@@ -34,7 +34,7 @@ class DemandeRepository extends ServiceEntityRepository
             ->setParameter('type', $type)
             ->setParameter('message', $message)
             ->setParameter('depuis', $depuis)
-            ->orderBy('d.creeLe', 'DESC')
+            ->orderBy('d.creeLe', \SortDirection::Descending)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

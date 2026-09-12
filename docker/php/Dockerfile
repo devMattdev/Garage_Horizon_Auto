@@ -59,7 +59,7 @@ EXPOSE 9000
 # ---------------------------------------------------------------------------
 FROM base AS dev
 
-RUN apk add --no-cache --virtual .build-deps-xdebug $PHPIZE_DEPS \
+RUN apk add --no-cache --virtual .build-deps-xdebug $PHPIZE_DEPS linux-headers \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && apk del .build-deps-xdebug
@@ -110,8 +110,10 @@ COPY . .
 
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
     && composer dump-env prod \
+    && php bin/console importmap:install --env=prod --no-debug \
+    && php bin/console asset-map:compile --env=prod --no-debug \
     && rm -rf var/cache/* \
-    && chown -R www-data:www-data var \
+    && chown -R www-data:www-data var public/assets \
     && rm -f /usr/bin/composer
 
 USER www-data

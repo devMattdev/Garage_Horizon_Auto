@@ -4,7 +4,9 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {% if turnstile_site_key %}
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -16,6 +18,7 @@
         </p>
 
         {{ form_start(form) }}
+            {{ form_errors(form) }}
             {{ form_row(form.type) }}
             {{ form_row(form.nom) }}
             <div class="row">
@@ -35,16 +38,20 @@
                 {{ form_widget(form.siteWeb, {attr: {tabindex: '-1', autocomplete: 'off'}}) }}
             </div>
 
-            <div class="cf-turnstile mb-3" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileSuccess"></div>
+            {% if turnstile_site_key %}
+                <div class="cf-turnstile mb-3" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileSuccess"></div>
+            {% endif %}
             {{ form_widget(form.cfTurnstileResponse, {attr: {id: 'demande_cfTurnstileResponseHidden', type: 'hidden'}}) }}
 
             <button type="submit" class="btn btn-primary">Envoyer ma demande</button>
         {{ form_end(form) }}
     </div>
 
-    <script>
-        function onTurnstileSuccess(token) {
-            document.getElementById('demande_cfTurnstileResponseHidden').value = token;
-        }
-    </script>
+    {% if turnstile_site_key %}
+        <script>
+            function onTurnstileSuccess(token) {
+                document.getElementById('demande_cfTurnstileResponseHidden').value = token;
+            }
+        </script>
+    {% endif %}
 {% endblock %}

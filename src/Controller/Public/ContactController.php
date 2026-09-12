@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
@@ -25,7 +25,7 @@ class ContactController extends AbstractController
     public function __construct(
         private readonly TurnstileValidator $turnstileValidator,
         private readonly DemandeHandler $demandeHandler,
-        private readonly RateLimiterFactory $demandeParIpLimiter,
+        private readonly RateLimiterFactoryInterface $demandeParIpLimiter,
     ) {
     }
 

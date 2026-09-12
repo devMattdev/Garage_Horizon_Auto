@@ -19,7 +19,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Blank;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -76,7 +75,6 @@ class DemandeType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'label' => false,
-                'constraints' => [new Blank(message: 'Champ invalide.')],
             ])
             ->add('cfTurnstileResponse', TextType::class, [
                 'mapped' => false,

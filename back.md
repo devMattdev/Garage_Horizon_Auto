@@ -412,8 +412,8 @@ Aucune intégration n'est bloquante : le site reste entièrement fonctionnel si 
 6. Durée de conservation des demandes : 12 mois annoncés, à justifier par la finalité. Obligations d'information, recueil du consentement pour les relances et conditions de dispense de bandeau de consentement : **à vérifier dans les sources officielles (CNIL) avant rédaction des mentions**, non traité ici.
 7. Autorisation d'usage du nom et du logo du centre de contrôle technique partenaire.
 8. Conditions d'affichage du label QualiRépar.
-9. Version exacte de `symfonycasts/sass-bundle` compatible Symfony 7.4 : à confirmer à l'installation.
-10. Choix de l'outil de test bout en bout (Panther ou Playwright).
+9. **Confirmé** : `symfonycasts/sass-bundle` 0.10.0, validé avec Symfony 7.4 et dans l'image de production PHP 8.4.
+10. **Confirmé** : Panther 2.4.0, avec ChromeDriver détecté par BDI ; les parcours « demande de rendez-vous » et « consultation d'un véhicule » sont exécutés en CI.
 
 ---
 
