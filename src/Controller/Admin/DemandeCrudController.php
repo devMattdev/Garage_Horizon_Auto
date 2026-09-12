@@ -24,6 +24,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -31,8 +33,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DemandeCrudController extends AbstractCrudController
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        #[Target('audit')]
+        private readonly LoggerInterface $auditLogger,
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -117,5 +122,10 @@ class DemandeCrudController extends AbstractCrudController
 
         $this->entityManager->persist($journal);
         $this->entityManager->flush();
+
+        $this->auditLogger->info($action, [
+            'demande' => $demande->getId(),
+            'utilisateur' => $utilisateur instanceof Utilisateur ? $utilisateur->getId() : null,
+        ]);
     }
 }

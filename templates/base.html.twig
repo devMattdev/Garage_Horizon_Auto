@@ -45,13 +45,18 @@
         </header>
 
         <main>
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="container mt-3">
-                        <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }}">{{ message }}</div>
-                    </div>
+            {# app.request.hasPreviousSession évite de démarrer une session (et donc un
+               Set-Cookie) sur chaque page publique : indispensable pour que le cache HTTP
+               d'une heure des pages éditoriales (back.md section 12) reste sûr à partager. #}
+            {% if app.request.hasPreviousSession %}
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="container mt-3">
+                            <div class="alert alert-{{ label == 'success' ? 'success' : (label == 'error' ? 'danger' : 'info') }}">{{ message }}</div>
+                        </div>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            {% endif %}
 
             {% block body %}{% endblock %}
         </main>

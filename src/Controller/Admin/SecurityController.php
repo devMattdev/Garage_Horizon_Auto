@@ -26,6 +26,12 @@ class SecurityController extends AbstractController
             'password_label' => 'Mot de passe',
             'sign_in_label' => 'Connexion',
             'page_title' => 'Horizon Auto',
+            // Cette page n'est pas rendue depuis un AbstractDashboardController : le
+            // contexte "ea" est donc toujours null ici, et le template de connexion
+            // d'EasyAdmin retombe silencieusement sur target_path="/" sans cette valeur
+            // explicite (la configuration default_target_path de security.yaml n'est
+            // jamais utilisée : le champ caché _target_path du formulaire est prioritaire).
+            'target_path' => $this->generateUrl('admin_dashboard'),
         ]);
     }
 

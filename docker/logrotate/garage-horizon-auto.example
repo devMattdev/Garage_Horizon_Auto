@@ -1,0 +1,54 @@
+# Garage Horizon Auto — rotation des journaux applicatifs sur le VPS de production
+#
+# back.md section 17 "Journalisation et audit" :
+#   app          30 jours
+#   security     12 mois
+#   audit        12 mois
+#   deprecation  7 jours
+# "Rotation quotidienne via logrotate."
+#
+# config/packages/monolog.yaml (bloc when@prod) ecrit un fichier distinct par canal
+# dans %kernel.logs_dir% (var/log/ du deploiement courant), pour permettre cette
+# retention differenciee.
+#
+# Installation sur le VPS :
+#   1. Adapter le chemin ci-dessous au repertoire reel de deploiement (WorkingDirectory
+#      du service systemd du worker, voir docker/systemd/messenger-worker.service.example)
+#      et au bind-mount "var/" defini dans docker-compose.prod.yaml (hors perimetre de
+#      ce depot de dev).
+#   2. Copier vers /etc/logrotate.d/garage-horizon-auto
+#   3. Tester sans rien casser : sudo logrotate --debug /etc/logrotate.d/garage-horizon-auto
+#
+# Le fichier n'est PAS actif tel quel (extension .example) : il documente la
+# configuration attendue et sert de modele, a copier/adapter lors du deploiement.
+
+/srv/garage-horizon-auto/current/var/log/app.log {
+    daily
+    rotate 30
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+}
+
+/srv/garage-horizon-auto/current/var/log/security.log
+/srv/garage-horizon-auto/current/var/log/audit.log {
+    daily
+    rotate 365
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+}
+
+/srv/garage-horizon-auto/current/var/log/deprecation.log {
+    daily
+    rotate 7
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+}
