@@ -88,17 +88,8 @@ jobs:
       - name: PHPStan niveau 8 (src + tests)
         run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --no-progress
 
-      - name: Twig CS Fixer (templates) - TODO
-        # Verifie le 2026-09-11 : `npx --yes twig-cs-fixer` echoue avec un 404, il
-        # n'existe pas de paquet npm nomme "twig-cs-fixer" (verification faite aupres
-        # du registre npm avant d'ecrire cette etape, pour ne pas ajouter un appel
-        # voue a l'echec). L'outil correspondant au cahier des charges est le paquet
-        # Composer vincentlanglet/twig-cs-fixer.
-        # TODO equipe applicative : `composer require --dev vincentlanglet/twig-cs-fixer`
-        # (hors perimetre de cette tache d'infrastructure, qui ne doit pas modifier
-        # composer.json) puis remplacer cette etape par :
-        #   vendor/bin/twig-cs-fixer lint templates
-        run: echo "twig-cs-fixer non installe (paquet Composer a ajouter par l'equipe applicative) - etape ignoree, voir commentaire ci-dessus."
+      - name: Twig CS Fixer (templates)
+        run: vendor/bin/twig-cs-fixer lint --config=.twig-cs-fixer.dist.php
 
       - name: Symfony bin/console lint:twig
         run: |

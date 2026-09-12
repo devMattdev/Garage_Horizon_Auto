@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\StatutDemande;
+use App\Enum\StatutVehicule;
 use App\Enum\TypeDemande;
 use App\Repository\DemandeRepository;
+use App\Validator\Constraints\Immatriculation;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: DemandeRepository::class)]
 #[ORM\Table(name: 'demande')]
@@ -34,6 +38,7 @@ class Demande
     private ?string $email = null;
 
     #[ORM\Column(length: 15, nullable: true)]
+    #[Immatriculation]
     private ?string $immatriculation = null;
 
     #[ORM\Column(nullable: true)]
@@ -264,5 +269,22 @@ class Demande
         $this->purgePrevueLe = $purgePrevueLe;
 
         return $this;
+    }
+
+    /**
+     * RG-03 : une demande de type VEHICULE doit référencer un véhicule au statut PUBLIE.
+     */
+    #[Assert\Callback]
+    public function validerVehiculePublie(ExecutionContextInterface $context): void
+    {
+        if (TypeDemande::VEHICULE !== $this->type) {
+            return;
+        }
+
+        if (null === $this->vehicule || StatutVehicule::PUBLIE !== $this->vehicule->getStatut()) {
+            $context->buildViolation('Le véhicule sélectionné doit être publié.')
+                ->atPath('vehicule')
+                ->addViolation();
+        }
     }
 }

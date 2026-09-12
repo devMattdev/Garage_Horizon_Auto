@@ -72,6 +72,26 @@ final class PublicationVehiculeTest extends TestCase
         $publicationVehicule->publier($vehicule);
     }
 
+    /**
+     * RG-04 : impossible de publier sans kilométrage.
+     */
+    public function testPublierEchoueSansKilometrage(): void
+    {
+        $vehicule = $this->creerVehicule();
+        $vehicule->setKilometrage(0);
+        $vehicule->addPhoto((new PhotoVehicule())->setFichier('photo.jpg')->setTexteAlternatif('Peugeot 208'));
+        $vehicule->setPrix('12000.00');
+
+        $publicationVehicule = new PublicationVehicule(
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(VehiculeRepository::class),
+            $this->createMock(EventDispatcherInterface::class),
+        );
+
+        $this->expectException(ValidatorException::class);
+        $publicationVehicule->publier($vehicule);
+    }
+
     public function testPublierReussitAvecPhotoEtPrixEtDeclencheEvenement(): void
     {
         $vehicule = $this->creerVehicule();

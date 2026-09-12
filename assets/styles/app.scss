@@ -6,3 +6,13 @@
     text-align: center;
     font-weight: 600;
 }
+
+// Conteneurs de contenu éditorial étroit (évite les attributs style="" inline,
+// bloqués par le Content-Security-Policy — back.md section 7.2, A05).
+.container-etroit {
+    max-width: 720px;
+}
+
+.container-etroit-sm {
+    max-width: 640px;
+}

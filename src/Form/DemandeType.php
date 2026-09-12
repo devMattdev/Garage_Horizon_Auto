@@ -7,7 +7,10 @@ namespace App\Form;
 use App\Entity\Demande;
 use App\Entity\Prestation;
 use App\Entity\Vehicule;
+use App\Enum\StatutVehicule;
 use App\Enum\TypeDemande;
+use App\Repository\VehiculeRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -64,6 +67,11 @@ class DemandeType extends AbstractType
                 'choice_label' => 'titre',
                 'required' => false,
                 'placeholder' => 'Aucun véhicule en particulier',
+                // RG-03 : une demande de type VEHICULE ne peut référencer qu'un véhicule publié.
+                'query_builder' => static fn (VehiculeRepository $repository): QueryBuilder => $repository
+                    ->createQueryBuilder('v')
+                    ->andWhere('v.statut = :statut')
+                    ->setParameter('statut', StatutVehicule::PUBLIE),
             ])
             ->add('creneauSouhaite', TextType::class, ['required' => false, 'label' => 'Créneau souhaité'])
             ->add('message', TextareaType::class, ['required' => false])

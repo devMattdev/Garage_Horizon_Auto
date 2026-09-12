@@ -8,6 +8,7 @@ use App\Enum\FamillePrestation;
 use App\Repository\PrestationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PrestationRepository::class)]
 #[ORM\Table(name: 'prestation')]
@@ -35,6 +36,7 @@ class Prestation
     private string $description;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
+    #[Assert\Positive(message: 'Le tarif indicatif ne peut être négatif ni nul (RG-07).')]
     private ?string $tarifIndicatif = null;
 
     #[ORM\Column(length: 255, nullable: true)]

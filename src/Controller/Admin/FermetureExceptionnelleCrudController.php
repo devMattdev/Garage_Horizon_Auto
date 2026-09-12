@@ -6,14 +6,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\FermetureExceptionnelle;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
- * @extends AbstractCrudController<FermetureExceptionnelle>
+ * @extends GerantSeulementCrudController<FermetureExceptionnelle>
  */
-class FermetureExceptionnelleCrudController extends AbstractCrudController
+class FermetureExceptionnelleCrudController extends GerantSeulementCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -22,7 +21,7 @@ class FermetureExceptionnelleCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
+        return parent::configureCrud($crud)
             ->setEntityLabelInSingular('Fermeture exceptionnelle')
             ->setEntityLabelInPlural('Fermetures exceptionnelles')
             ->setDefaultSort(['debutLe' => 'DESC']);

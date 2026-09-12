@@ -6,7 +6,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\PageLocale;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -14,9 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
- * @extends AbstractCrudController<PageLocale>
+ * @extends GerantSeulementCrudController<PageLocale>
  */
-class PageLocaleCrudController extends AbstractCrudController
+class PageLocaleCrudController extends GerantSeulementCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -25,7 +24,7 @@ class PageLocaleCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
+        return parent::configureCrud($crud)
             ->setEntityLabelInSingular('Page locale')
             ->setEntityLabelInPlural('Pages locales');
     }

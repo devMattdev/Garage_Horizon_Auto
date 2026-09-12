@@ -8,6 +8,8 @@ use App\Entity\Vehicule;
 use App\Enum\BoiteVitesses;
 use App\Enum\Energie;
 use App\Enum\StatutVehicule;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -36,6 +38,13 @@ class VehiculeCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Véhicule')
             ->setEntityLabelInPlural('Véhicules d\'occasion')
             ->setDefaultSort(['publieLe' => 'DESC']);
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions->add(Crud::PAGE_INDEX, Action::new('exportCsv', 'Exporter en CSV', 'fa fa-file-csv')
+            ->linkToRoute('admin_vehicule_export_csv')
+            ->createAsGlobalAction());
     }
 
     public function configureFields(string $pageName): iterable

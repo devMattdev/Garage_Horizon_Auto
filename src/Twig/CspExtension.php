@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Twig;
+
+use App\Security\CspNonceGenerator;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+final class CspExtension extends AbstractExtension
+{
+    public function __construct(private readonly CspNonceGenerator $cspNonceGenerator)
+    {
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('csp_nonce', $this->cspNonceGenerator->generate(...)),
+        ];
+    }
+}

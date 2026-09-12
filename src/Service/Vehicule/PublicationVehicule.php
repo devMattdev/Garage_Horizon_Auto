@@ -40,6 +40,10 @@ class PublicationVehicule
             throw new ValidatorException('Un véhicule doit avoir un prix pour être publié.');
         }
 
+        if ($vehicule->getKilometrage() <= 0) {
+            throw new ValidatorException('Un véhicule doit avoir un kilométrage pour être publié.');
+        }
+
         $vehicule->setStatut(StatutVehicule::PUBLIE);
         $vehicule->setPublieLe(new \DateTimeImmutable());
         $vehicule->setModifieLe(new \DateTimeImmutable());

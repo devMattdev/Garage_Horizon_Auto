@@ -3,7 +3,7 @@
 {% block title %}Demande envoyée — {{ parent() }}{% endblock %}
 
 {% block body %}
-    <div class="container py-5 text-center" style="max-width: 640px;">
+    <div class="container py-5 text-center container-etroit-sm">
         <h1 class="h2">Votre demande a bien été envoyée</h1>
         <p class="lead">Nous revenons vers vous sous {{ parametres_site().delaiReponseJoursOuvres }} jours ouvrés.</p>
         <a class="btn btn-outline-primary" href="{{ path('accueil') }}">Retour à l'accueil</a>

@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use App\Entity\Prestation;
 use App\Enum\FamillePrestation;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -18,9 +17,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
- * @extends AbstractCrudController<Prestation>
+ * @extends GerantSeulementCrudController<Prestation>
  */
-class PrestationCrudController extends AbstractCrudController
+class PrestationCrudController extends GerantSeulementCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -29,7 +28,7 @@ class PrestationCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
+        return parent::configureCrud($crud)
             ->setEntityLabelInSingular('Prestation')
             ->setEntityLabelInPlural('Prestations')
             ->setDefaultSort(['ordre' => 'ASC']);

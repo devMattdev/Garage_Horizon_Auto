@@ -98,6 +98,7 @@
         "phpunit/phpunit": "^11.5",
         "symfony/maker-bundle": "^1.67",
         "symfony/panther": "^2.4",
-        "symfony/phpunit-bridge": "^8.1"
+        "symfony/phpunit-bridge": "^8.1",
+        "vincentlanglet/twig-cs-fixer": "^4.1"
     }
 }

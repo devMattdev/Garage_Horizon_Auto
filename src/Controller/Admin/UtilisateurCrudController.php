@@ -7,7 +7,6 @@ namespace App\Controller\Admin;
 use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -21,9 +20,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * @extends AbstractCrudController<Utilisateur>
+ * @extends GerantSeulementCrudController<Utilisateur>
  */
-class UtilisateurCrudController extends AbstractCrudController
+class UtilisateurCrudController extends GerantSeulementCrudController
 {
     public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
     {
@@ -36,7 +35,7 @@ class UtilisateurCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
+        return parent::configureCrud($crud)
             ->setEntityLabelInSingular('Utilisateur')
             ->setEntityLabelInPlural('Utilisateurs');
     }

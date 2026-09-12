@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Security\Voter\GerantVoter;
 use App\Service\Rgpd\ExportDonneesPersonnelles;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +17,7 @@ class RgpdExportController extends AbstractController
     #[Route('/admin/rgpd/export', name: 'admin_rgpd_export')]
     public function __invoke(Request $request, ExportDonneesPersonnelles $exportDonneesPersonnelles): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted(GerantVoter::RESERVE_GERANT);
 
         $email = $request->query->get('email');
         $telephone = $request->query->get('telephone');

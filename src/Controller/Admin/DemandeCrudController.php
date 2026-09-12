@@ -50,7 +50,11 @@ class DemandeCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions->disable(Action::NEW);
+        return $actions
+            ->disable(Action::NEW)
+            ->add(Crud::PAGE_INDEX, Action::new('exportCsv', 'Exporter en CSV', 'fa fa-file-csv')
+                ->linkToRoute('admin_demande_export_csv')
+                ->createAsGlobalAction());
     }
 
     public function configureFields(string $pageName): iterable

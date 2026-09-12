@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Form\Admin\ParametresSiteType;
 use App\Repository\ParametresSiteRepository;
+use App\Security\Voter\GerantVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ class ParametresSiteController extends AbstractController
         ParametresSiteRepository $parametresSiteRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted(GerantVoter::RESERVE_GERANT);
 
         $parametres = $parametresSiteRepository->getInstance();
 

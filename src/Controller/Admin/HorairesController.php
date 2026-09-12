@@ -8,6 +8,7 @@ use App\Entity\PlageHoraire;
 use App\Enum\JourSemaine;
 use App\Form\Admin\HorairesType;
 use App\Repository\PlageHoraireRepository;
+use App\Security\Voter\GerantVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,7 @@ class HorairesController extends AbstractController
         PlageHoraireRepository $plageHoraireRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $this->denyAccessUnlessGranted(GerantVoter::RESERVE_GERANT);
 
         $plagesExistantes = $plageHoraireRepository->findToutesIndexeesParJour();
 
