@@ -50,7 +50,7 @@ jobs:
 
     steps:
       - name: Recuperation du code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Installation de PHP ${{ env.PHP_VERSION }}
         uses: shivammathur/setup-php@v2
@@ -128,7 +128,7 @@ jobs:
 
     steps:
       - name: Recuperation du code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Activation de Docker Buildx
         uses: docker/setup-buildx-action@v3
