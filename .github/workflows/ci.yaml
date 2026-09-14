@@ -131,7 +131,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Activation de Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Construction du stage PHP de production
         uses: docker/build-push-action@v6
