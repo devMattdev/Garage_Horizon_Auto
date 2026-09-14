@@ -1,0 +1,4 @@
+{% extends 'base.html.twig' %}
+{% block title %}Maintenance — {{ parent() }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex,nofollow">{% endblock %}
+{% block body %}<section class="section-space"><div class="container container-etroit text-center"><p class="section-eyebrow">Maintenance</p><h1>Le site revient bientôt.</h1><p>Le garage reste joignable{% if parametres_site().telephone %} au <a href="tel:{{ telephone_uri(parametres_site().telephone) }}">{{ parametres_site().telephone }}</a>{% endif %}.</p></div></section>{% endblock %}

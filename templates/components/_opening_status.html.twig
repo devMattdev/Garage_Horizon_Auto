@@ -1,0 +1,3 @@
+{% set ouvert = garage_ouvert() %}
+{% set prochaine = prochaine_ouverture() %}
+<p class="mb-0"><span class="opening-status {{ ouvert ? 'opening-status--open' }}"><strong>{{ ouvert ? 'Le garage est ouvert' : 'Le garage est fermé' }}</strong></span>{% if not ouvert and prochaine %}<br><span class="small">Prochaine ouverture : {{ prochaine|date('d/m/Y à H\\hi') }}</span>{% endif %}</p>

@@ -1,27 +1,23 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Nos prestations — {{ parent() }}{% endblock %}
-
+{% import 'components/_icons.html.twig' as icons %}
+{% block title %}Prestations automobile — {{ parent() }}{% endblock %}
+{% block meta_description %}Découvrez les prestations d’entretien et de réparation proposées par le garage.{% endblock %}
 {% block body %}
-    <div class="container py-5">
-        <h1 class="h2 mb-4">Nos prestations</h1>
-        <div class="row g-4">
-            {% for prestation in prestations %}
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h2 class="h5 card-title">{{ prestation.nom }}</h2>
-                            <p class="card-text">{{ prestation.resume }}</p>
-                            {% if prestation.tarifIndicatif %}
-                                <p class="text-muted mb-1">À partir de {{ prestation.tarifIndicatif|number_format(2, ',', ' ') }} € — devis obligatoire</p>
-                            {% endif %}
-                            <a class="stretched-link" href="{{ path('prestation_detail', {slug: prestation.slug}) }}">En savoir plus</a>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <p>Aucune prestation publiée pour le moment.</p>
-            {% endfor %}
-        </div>
-    </div>
+    {% if not famille %}
+        {% include 'public/prestation/_toutes.html.twig' %}
+    {% elseif famille and famille.value == 'mecanique' %}
+        {% include 'public/prestation/_mecanique.html.twig' %}
+    {% elseif famille and famille.value == 'pneumatique' %}
+        {% include 'public/prestation/_pneumatique.html.twig' %}
+    {% elseif famille and famille.value == 'climatisation' %}
+        {% include 'public/prestation/_climatisation.html.twig' %}
+    {% elseif famille and famille.value == 'diagnostic' %}
+        {% include 'public/prestation/_diagnostic.html.twig' %}
+    {% elseif famille and famille.value == 'controle_technique' %}
+        {% include 'public/prestation/_controle_technique.html.twig' %}
+    {% else %}
+    {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Prestations'}]} %}
+    <header class="page-hero"><div class="container"><p class="section-eyebrow">Atelier</p><h1>{{ famille ? famille.value|replace({'_': ' '})|capitalize : 'Prestations automobile' }}</h1><p class="hero__lead">Choisissez l’intervention qui correspond à votre besoin, puis demandez un devis ou un rendez-vous.</p>{% if famille %}<a class="btn btn-outline-primary mt-3" href="{{ path('prestations_index') }}">Voir toutes les prestations</a>{% endif %}</div></header>
+    <section class="section-space"><div class="container"><div class="row g-4">{% for prestation in prestations %}<div class="col-md-6 col-lg-4">{% include 'components/_service_card.html.twig' with {prestation: prestation} only %}</div>{% else %}<div class="empty-state">Aucune prestation publiée {{ famille ? 'pour cette famille' : 'pour le moment' }}.</div>{% endfor %}</div></div></section>
+    {% endif %}
 {% endblock %}

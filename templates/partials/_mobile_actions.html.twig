@@ -1,0 +1,6 @@
+{% set site = parametres_site() %}
+<nav class="mobile-actions" aria-label="Actions rapides">
+    {% if site.telephone %}<a href="tel:{{ telephone_uri(site.telephone) }}"><span aria-hidden="true">☎</span><br>Appeler</a>{% else %}<a href="{{ path('contact') }}">Contact</a>{% endif %}
+    <a href="{{ path('rendez_vous') }}"><span aria-hidden="true">＋</span><br>Rendez-vous</a>
+    <a href="{{ site.urlFicheGoogle ?: path('contact') ~ '#acces' }}"><span aria-hidden="true">⌖</span><br>Itinéraire</a>
+</nav>

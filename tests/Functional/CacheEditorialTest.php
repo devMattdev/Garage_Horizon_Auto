@@ -20,7 +20,7 @@ final class CacheEditorialTest extends DatabaseWebTestCase
     {
         yield 'Accueil' => ['/'];
         yield 'Prestations' => ['/prestations'];
-        yield 'FAQ' => ['/faq'];
+        yield 'FAQ' => ['/questions-frequentes'];
         yield 'Véhicules' => ['/vehicules-occasion'];
     }
 
@@ -37,7 +37,7 @@ final class CacheEditorialTest extends DatabaseWebTestCase
 
     public function testAucunCacheSurLeFormulaireDeContact(): void
     {
-        $this->client->request('GET', '/contact');
+        $this->client->request('GET', '/rendez-vous');
 
         self::assertResponseIsSuccessful();
         $cacheControl = (string) $this->client->getResponse()->headers->get('Cache-Control');

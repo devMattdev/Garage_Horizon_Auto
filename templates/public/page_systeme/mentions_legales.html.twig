@@ -3,6 +3,7 @@
 {% block title %}Mentions légales — {{ parent() }}{% endblock %}
 
 {% block body %}
+    {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Mentions légales'}]} %}
     <div class="container py-5 container-etroit">
         <h1 class="h2 mb-4">Mentions légales</h1>
 

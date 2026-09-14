@@ -28,10 +28,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * Formulaire public de demande (RDV, devis, question, véhicule) — back.md section 5.3.
- * Inclut le champ honeypot "siteWeb" : invisible pour un humain, rempli uniquement par les robots.
- */
-/**
  * @extends AbstractType<Demande>
  */
 class DemandeType extends AbstractType
@@ -41,21 +37,42 @@ class DemandeType extends AbstractType
         $builder
             ->add('type', EnumType::class, [
                 'class' => TypeDemande::class,
+                'expanded' => true,
+                'label' => 'Votre besoin',
+                'choice_attr' => static fn () => [
+                    'data-formulaire-demande-target' => 'type',
+                    'data-action' => 'change->formulaire-demande#updateConditionalFields',
+                ],
                 'choice_label' => static fn (TypeDemande $type) => match ($type) {
                     TypeDemande::RDV => 'Prendre rendez-vous',
                     TypeDemande::DEVIS => 'Demander un devis',
                     TypeDemande::QUESTION => 'Poser une question',
-                    TypeDemande::VEHICULE => 'Un véhicule d\'occasion m\'intéresse',
+                    TypeDemande::VEHICULE => 'Un véhicule d’occasion m’intéresse',
                 },
             ])
-            ->add('nom', TextType::class, ['constraints' => [new NotBlank()]])
-            ->add('telephone', TelType::class, ['required' => false])
+            ->add('nom', TextType::class, [
+                'label' => 'Nom et prénom',
+                'constraints' => [new NotBlank()],
+                'attr' => ['autocomplete' => 'name'],
+            ])
+            ->add('telephone', TelType::class, [
+                'required' => false,
+                'attr' => ['autocomplete' => 'tel', 'inputmode' => 'tel'],
+            ])
             ->add('email', EmailType::class, [
                 'required' => false,
                 'constraints' => [new Email()],
+                'attr' => ['autocomplete' => 'email'],
             ])
-            ->add('immatriculation', TextType::class, ['required' => false])
-            ->add('kilometrage', IntegerType::class, ['required' => false])
+            ->add('immatriculation', TextType::class, [
+                'required' => false,
+                'help' => 'Exemple : AB-123-CD',
+                'attr' => ['autocomplete' => 'off', 'inputmode' => 'text'],
+            ])
+            ->add('kilometrage', IntegerType::class, [
+                'required' => false,
+                'attr' => ['min' => 0, 'inputmode' => 'numeric'],
+            ])
             ->add('prestation', EntityType::class, [
                 'class' => Prestation::class,
                 'choice_label' => 'nom',
@@ -67,29 +84,40 @@ class DemandeType extends AbstractType
                 'choice_label' => 'titre',
                 'required' => false,
                 'placeholder' => 'Aucun véhicule en particulier',
-                // RG-03 : une demande de type VEHICULE ne peut référencer qu'un véhicule publié.
                 'query_builder' => static fn (VehiculeRepository $repository): QueryBuilder => $repository
                     ->createQueryBuilder('v')
                     ->andWhere('v.statut = :statut')
                     ->setParameter('statut', StatutVehicule::PUBLIE),
             ])
-            ->add('creneauSouhaite', TextType::class, ['required' => false, 'label' => 'Créneau souhaité'])
-            ->add('message', TextareaType::class, ['required' => false])
+            ->add('creneauSouhaite', TextType::class, [
+                'required' => false,
+                'label' => 'Créneau souhaité',
+                'help' => 'Indiquez un jour et une plage horaire ; le garage vous confirmera le rendez-vous.',
+            ])
+            ->add('message', TextareaType::class, [
+                'required' => false,
+                'attr' => [
+                    'rows' => 6,
+                    'maxlength' => 2000,
+                    'data-formulaire-demande-target' => 'message',
+                    'data-action' => 'input->formulaire-demande#updateCounter',
+                ],
+            ])
             ->add('consentementRelance', CheckboxType::class, [
                 'required' => false,
-                'label' => 'J\'accepte de recevoir des offres et relances commerciales par courriel.',
+                'label' => 'J’accepte de recevoir des offres et relances commerciales par courriel.',
             ])
             ->add('siteWeb', TextType::class, [
                 'mapped' => false,
                 'required' => false,
-                'label' => false,
+                'label' => 'Site web',
+                'attr' => ['autocomplete' => 'off', 'tabindex' => '-1'],
             ])
             ->add('cfTurnstileResponse', TextType::class, [
                 'mapped' => false,
                 'required' => false,
                 'label' => false,
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

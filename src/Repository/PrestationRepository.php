@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Prestation;
+use App\Enum\FamillePrestation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,13 +22,17 @@ class PrestationRepository extends ServiceEntityRepository
     /**
      * @return Prestation[]
      */
-    public function findActivesOrdonnees(): array
+    public function findActivesOrdonnees(?FamillePrestation $famille = null): array
     {
-        return $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('p')
             ->andWhere('p.actif = true')
             ->orderBy('p.ordre', \SortDirection::Ascending)
-            ->addOrderBy('p.nom', \SortDirection::Ascending)
-            ->getQuery()
-            ->getResult();
+            ->addOrderBy('p.nom', \SortDirection::Ascending);
+
+        if (null !== $famille) {
+            $qb->andWhere('p.famille = :famille')->setParameter('famille', $famille);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

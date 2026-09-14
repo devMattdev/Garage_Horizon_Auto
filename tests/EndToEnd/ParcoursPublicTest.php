@@ -40,9 +40,9 @@ final class ParcoursPublicTest extends PantherTestCase
     {
         $client = $this->navigateur();
         $crawler = $client->request('GET', '/');
-        $crawler = $client->click($crawler->selectLink('Prendre rendez-vous')->link());
+        $crawler = $client->click($crawler->selectLink('Demander un rendez-vous')->link());
 
-        self::assertSelectorTextContains('h1', 'Nous contacter');
+        self::assertSelectorTextContains('h1', 'Prendre rendez-vous');
         $form = $crawler->selectButton('Envoyer ma demande')->form();
         $client->submit($form, [
             'demande[type]' => 'rdv',
@@ -53,7 +53,7 @@ final class ParcoursPublicTest extends PantherTestCase
             'demande[cfTurnstileResponse]' => 'jeton-e2e',
         ]);
 
-        self::assertSelectorTextContains('h1', 'Votre demande a bien été envoyée');
+        self::assertSelectorTextContains('h1', 'votre demande a bien été envoyée');
         $this->entityManager->clear();
         self::assertSame(1, $this->entityManager->getRepository(Demande::class)->count([]));
 
@@ -81,14 +81,14 @@ final class ParcoursPublicTest extends PantherTestCase
         $client = $this->navigateur();
         $crawler = $client->request('GET', '/vehicules-occasion');
 
-        self::assertSelectorTextContains('h1', "Véhicules d'occasion");
-        self::assertSelectorTextContains('.card-title', 'Peugeot 208 Allure');
+        self::assertSelectorTextContains('h1', 'Véhicules d’occasion');
+        self::assertSelectorTextContains('.vehicle-card h2', 'Peugeot 208 Allure');
         $client->click($crawler->selectLink('Voir la fiche')->link());
 
         self::assertSelectorTextContains('h1', 'Peugeot 208 Allure');
         self::assertSelectorTextContains('main', '32 500 km');
         self::assertSelectorTextContains('main', '15 990 €');
-        self::assertSelectorTextContains('main a.btn-primary', "Ce véhicule m'intéresse");
+        self::assertSelectorTextContains('main a.btn-primary', 'Ce véhicule m’intéresse');
 
         $this->assertAucuneViolationAccessibilite($client);
     }

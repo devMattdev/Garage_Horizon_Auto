@@ -31,6 +31,12 @@ final class CacheEditorialSubscriber implements EventSubscriberInterface
         'page_locale_detail',
         'vehicules_index',
         'vehicule_detail',
+        'garage',
+        'contact',
+        'plan_site',
+        'mentions_legales',
+        'politique_confidentialite',
+        'declaration_accessibilite',
     ];
 
     public static function getSubscribedEvents(): array

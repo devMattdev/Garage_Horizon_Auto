@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Public;
 
+use App\Repository\FermetureExceptionnelleRepository;
 use App\Repository\PrestationRepository;
+use App\Repository\QuestionFrequenteRepository;
 use App\Repository\VehiculeRepository;
 use App\Service\Horaires\CalculateurOuverture;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +20,8 @@ class HomeController extends AbstractController
         PrestationRepository $prestationRepository,
         VehiculeRepository $vehiculeRepository,
         CalculateurOuverture $calculateurOuverture,
+        QuestionFrequenteRepository $questionFrequenteRepository,
+        FermetureExceptionnelleRepository $fermetureExceptionnelleRepository,
     ): Response {
         $prestationsEnAvant = array_values(array_filter(
             $prestationRepository->findActivesOrdonnees(),
@@ -27,7 +31,10 @@ class HomeController extends AbstractController
         return $this->render('public/home/index.html.twig', [
             'prestations' => [] !== $prestationsEnAvant ? $prestationsEnAvant : $prestationRepository->findActivesOrdonnees(),
             'vehicules' => \array_slice($vehiculeRepository->findPublies(), 0, 6),
+            'questions' => \array_slice($questionFrequenteRepository->findActivesOrdonnees(), 0, 4),
             'ouvert_maintenant' => $calculateurOuverture->estOuvert(new \DateTimeImmutable()),
+            'prochaine_ouverture' => $calculateurOuverture->prochaineOuverture(new \DateTimeImmutable()),
+            'fermetures' => \array_slice($fermetureExceptionnelleRepository->trouverAvenir(new \DateTimeImmutable('today')), 0, 1),
         ]);
     }
 }

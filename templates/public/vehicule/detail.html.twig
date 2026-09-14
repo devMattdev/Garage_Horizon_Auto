@@ -1,52 +1,21 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}{{ vehicule.titre }} — {{ parent() }}{% endblock %}
-
-{% block structured_data %}
-    <script type="application/ld+json">{{ donnees_structurees|json_encode|raw }}</script>
-{% endblock %}
-
+{% block meta_description %}{{ vehicule.titre }}, {{ vehicule.misEnCirculationLe|date('Y') }}, {{ vehicule.kilometrage|number_format(0, ',', ' ') }} km. Véhicule d’occasion proposé par le garage.{% endblock %}
+{% block structured_data %}<script type="application/ld+json" nonce="{{ csp_nonce('script') }}">{{ donnees_structurees|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>{% endblock %}
 {% block body %}
-    <div class="container py-5">
-        <nav aria-label="Fil d'Ariane" class="mb-3">
-            <a href="{{ path('vehicules_index') }}">&larr; Tous les véhicules</a>
-        </nav>
-
-        {% if vehicule.statut.value == 'vendu' %}
-            <div class="alert alert-secondary">Ce véhicule a été vendu.</div>
-        {% endif %}
-
-        <div class="row g-4">
-            <div class="col-md-6">
-                {% set photos = vehicule.photosTriees %}
-                {% if photos|length > 0 %}
-                    <picture>
-                        <source srcset="{{ path('photo_vehicule', {id: photos[0].id, variante: 'detail', format: 'webp'}) }}" type="image/webp">
-                        <img src="{{ path('photo_vehicule', {id: photos[0].id, variante: 'detail', format: 'jpg'}) }}" alt="{{ photos[0].texteAlternatif }}" class="img-fluid rounded" width="1600" loading="eager">
-                    </picture>
-                {% endif %}
-            </div>
-            <div class="col-md-6">
-                <h1 class="h2">{{ vehicule.titre }}</h1>
-                <ul class="list-unstyled">
-                    <li><strong>Mise en circulation :</strong> {{ vehicule.misEnCirculationLe|date('m/Y') }}</li>
-                    <li><strong>Kilométrage :</strong> {{ vehicule.kilometrage|number_format(0, ',', ' ') }} km</li>
-                    <li><strong>Énergie :</strong> {{ vehicule.energie.value|capitalize }}</li>
-                    <li><strong>Boîte :</strong> {{ vehicule.boite.value|capitalize }}</li>
-                    {% if vehicule.puissanceFiscale %}<li><strong>Puissance fiscale :</strong> {{ vehicule.puissanceFiscale }} CV</li>{% endif %}
-                </ul>
-                {% if vehicule.prix %}<p class="display-6">{{ vehicule.prix|number_format(0, ',', ' ') }} €</p>{% endif %}
-
-                {% if vehicule.statut.value != 'vendu' %}
-                    <a class="btn btn-primary" href="{{ path('contact', {type: 'vehicule'}) }}">Ce véhicule m'intéresse</a>
-                {% endif %}
-
-                {% if vehicule.urlAnnonceExterne %}
-                    <a class="btn btn-outline-secondary" href="{{ vehicule.urlAnnonceExterne }}" target="_blank" rel="noopener">Voir l'annonce complète</a>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="mt-4">{{ vehicule.description|nl2br }}</div>
-    </div>
+    {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Véhicules d’occasion', url: path('vehicules_index')}, {label: vehicule.titre}]} %}
+    <section class="section-space pt-3"><div class="container">
+        {% if vehicule.statut.value == 'vendu' %}<div class="alert alert-secondary" role="status"><strong>Véhicule vendu.</strong> Cette fiche reste visible temporairement à titre d’information.</div>{% endif %}
+        <div class="row g-5"><div class="col-lg-7">
+            {% set photos = vehicule.photosTriees %}
+            {% if photos|length > 0 %}<div class="gallery" data-controller="galerie" data-action="keydown->galerie#keydown touchstart->galerie#touchStart touchend->galerie#touchEnd" tabindex="0" aria-label="Galerie de {{ vehicule.titre }}">
+                <div class="gallery__stage">{% for photo in photos %}<picture><source srcset="{{ path('photo_vehicule', {id: photo.id, variante: 'detail', format: 'webp'}) }}" type="image/webp"><img class="gallery__slide{{ loop.first ? ' is-active' }}" data-galerie-target="slide" src="{{ path('photo_vehicule', {id: photo.id, variante: 'detail', format: 'jpg'}) }}" alt="{{ photo.texteAlternatif }}" width="1600" height="1200" {{ loop.first ? 'fetchpriority="high"' : 'loading="lazy"' }}></picture>{% endfor %}
+                    {% if photos|length > 1 %}<button class="btn btn-light gallery__control gallery__control--prev" type="button" data-action="galerie#previous" aria-label="Photo précédente">←</button><button class="btn btn-light gallery__control gallery__control--next" type="button" data-action="galerie#next" aria-label="Photo suivante">→</button>{% endif %}</div>
+                {% if photos|length > 1 %}<div class="gallery__thumbs">{% for photo in photos %}<button class="gallery__thumb" type="button" data-galerie-target="thumb" data-action="galerie#select" data-index="{{ loop.index0 }}" aria-label="Afficher la photo {{ loop.index }}" aria-current="{{ loop.first ? 'true' : 'false' }}"><img src="{{ path('photo_vehicule', {id: photo.id, variante: 'vignette', format: 'jpg'}) }}" alt="" width="160" height="120" loading="lazy"></button>{% endfor %}</div>{% endif %}<p class="visually-hidden" data-galerie-target="status" aria-live="polite"></p>
+            </div>{% else %}<div class="vehicle-card__placeholder">Photos à venir</div>{% endif %}
+        </div><div class="col-lg-5"><p class="section-eyebrow">Occasion · Réf. {{ vehicule.reference }}</p><h1>{{ vehicule.titre }}</h1>{% if vehicule.prix %}<p class="display-5 fw-bold text-primary">{{ vehicule.prix|number_format(0, ',', ' ') }} €</p>{% endif %}<dl class="spec-list">
+            <div><dt>Mise en circulation</dt><dd>{{ vehicule.misEnCirculationLe|date('m/Y') }}</dd></div><div><dt>Kilométrage</dt><dd>{{ vehicule.kilometrage|number_format(0, ',', ' ') }} km</dd></div><div><dt>Énergie</dt><dd>{{ vehicule.energie.value|capitalize }}</dd></div><div><dt>Boîte</dt><dd>{{ vehicule.boite.value|capitalize }}</dd></div>{% if vehicule.puissanceFiscale %}<div><dt>Puissance fiscale</dt><dd>{{ vehicule.puissanceFiscale }} CV</dd></div>{% endif %}{% if vehicule.puissanceDin %}<div><dt>Puissance DIN</dt><dd>{{ vehicule.puissanceDin }} ch</dd></div>{% endif %}
+        </dl>{% if vehicule.statut.value != 'vendu' %}<a class="btn btn-primary w-100 mt-4" href="{{ path('rendez_vous', {vehicule: vehicule.reference}) }}">Ce véhicule m’intéresse</a>{% endif %}{% if vehicule.urlAnnonceExterne %}<a class="btn btn-outline-primary w-100 mt-2" href="{{ vehicule.urlAnnonceExterne }}" target="_blank" rel="noopener noreferrer">Voir l’annonce externe</a>{% endif %}</div></div>
+        <article class="prose mt-5"><h2>Description</h2><div>{{ vehicule.description|nl2br }}</div></article>
+    </div></section>
 {% endblock %}

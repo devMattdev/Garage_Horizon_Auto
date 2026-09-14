@@ -28,4 +28,18 @@ class FermetureExceptionnelleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * @return FermetureExceptionnelle[]
+     */
+    public function trouverAvenir(\DateTimeImmutable $depuis, int $limite = 5): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.finLe >= :depuis')
+            ->setParameter('depuis', $depuis)
+            ->orderBy('f.debutLe', 'ASC')
+            ->setMaxResults($limite)
+            ->getQuery()
+            ->getResult();
+    }
 }

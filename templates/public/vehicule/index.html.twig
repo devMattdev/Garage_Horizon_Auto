@@ -1,33 +1,12 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Véhicules d'occasion — {{ parent() }}{% endblock %}
-
+{% extends 'base.html.twig' %}{% import 'components/_icons.html.twig' as icons %}{% set site = parametres_site() %}
+{% block title %}Véhicules d’occasion — {{ parent() }}{% endblock %}{% block meta_description %}Découvrez nos véhicules d’occasion contrôlés, garantis et prêts à prendre la route.{% endblock %}
 {% block body %}
-    <div class="container py-5">
-        <h1 class="h2 mb-4">Véhicules d'occasion</h1>
-        <div class="row g-4">
-            {% for vehicule in vehicules %}
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        {% set photos = vehicule.photosTriees %}
-                        {% if photos|length > 0 %}
-                            <picture>
-                                <source srcset="{{ path('photo_vehicule', {id: photos[0].id, variante: 'carte', format: 'webp'}) }}" type="image/webp">
-                                <img src="{{ path('photo_vehicule', {id: photos[0].id, variante: 'carte', format: 'jpg'}) }}" alt="{{ photos[0].texteAlternatif }}" class="card-img-top" width="800" loading="lazy">
-                            </picture>
-                        {% endif %}
-                        <div class="card-body">
-                            <h2 class="h5 card-title">{{ vehicule.titre }}</h2>
-                            <p class="card-text mb-1">{{ vehicule.misEnCirculationLe|date('Y') }} — {{ vehicule.kilometrage|number_format(0, ',', ' ') }} km</p>
-                            <p class="card-text mb-1">{{ vehicule.energie.value|capitalize }} — {{ vehicule.boite.value|capitalize }}</p>
-                            {% if vehicule.prix %}<p class="fw-bold">{{ vehicule.prix|number_format(0, ',', ' ') }} €</p>{% endif %}
-                            <a class="stretched-link" href="{{ path('vehicule_detail', {reference: vehicule.reference}) }}">Voir la fiche</a>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <p>Aucun véhicule disponible pour le moment.</p>
-            {% endfor %}
-        </div>
-    </div>
+<header class="used-hero"><img src="{{ asset('images/img-vehicules/hero-vehicules-occasion.png') }}" alt="" width="2172" height="724" loading="eager" fetchpriority="high"><div aria-hidden="true"></div><div class="container"><nav aria-label="Fil d’Ariane"><a href="{{ path('accueil') }}">Accueil</a><span>›</span><b>Véhicules d’occasion</b></nav><h1>Véhicules d’occasion</h1><p>Des véhicules contrôlés, garantis et prêts à prendre la route.</p><div class="d-flex flex-wrap gap-3"><a class="btn btn-primary btn-lg" href="#stock">{{ icons.svg('vehicle') }} Voir nos véhicules</a>{% if site.telephone %}<a class="btn btn-outline-light btn-lg" href="tel:{{ telephone_uri(site.telephone) }}">{{ icons.svg('phone') }} {{ site.telephone }}</a>{% endif %}</div></div></header>
+<main class="used-page"><div class="container">
+<section class="used-trust" aria-label="Nos garanties">{% for item in [{icon:'home-distribution',title:'Véhicules contrôlés',text:'Plus de 100 points de contrôle'},{icon:'shield',title:'Garantie incluse',text:'Jusqu’à 12 mois'},{icon:'document',title:'Historique vérifié',text:'Kilométrage certifié'},{icon:'swap',title:'Reprise possible',text:'Estimation rapide'}] %}<article><span>{{ icons.svg(item.icon) }}</span><strong>{{ item.title }}</strong><p>{{ item.text }}</p></article>{% endfor %}</section>
+{% if afficher_filtres %}<section class="used-filter" aria-labelledby="recherche-vo"><h2 id="recherche-vo">{{ icons.svg('search') }} Rechercher un véhicule</h2><form method="get"><div><label for="filtre-energie">Énergie</label><select id="filtre-energie" name="energie"><option value="">Toutes les énergies</option>{% for valeur,label in {'essence':'Essence','diesel':'Diesel','hybride':'Hybride','electrique':'Électrique','gpl':'GPL'} %}<option value="{{ valeur }}"{{ energie_active == valeur ? ' selected' }}>{{ label }}</option>{% endfor %}</select></div><div><label for="filtre-boite">Boîte de vitesses</label><select id="filtre-boite" name="boite"><option value="">Toutes les boîtes</option><option value="manuelle"{{ boite_active == 'manuelle' ? ' selected' }}>Manuelle</option><option value="automatique"{{ boite_active == 'automatique' ? ' selected' }}>Automatique</option></select></div><div><label for="filtre-tri">Trier les résultats</label><select id="filtre-tri" name="tri"><option value="recent"{{ tri_actif == 'recent' ? ' selected' }}>Plus récents</option><option value="prix-asc"{{ tri_actif == 'prix-asc' ? ' selected' }}>Prix croissant</option><option value="prix-desc"{{ tri_actif == 'prix-desc' ? ' selected' }}>Prix décroissant</option><option value="kilometrage"{{ tri_actif == 'kilometrage' ? ' selected' }}>Kilométrage</option></select></div><button class="btn btn-primary" type="submit">{{ icons.svg('search') }} Rechercher</button><a href="{{ path('vehicules_index') }}">Réinitialiser les filtres</a></form></section>{% endif %}
+<section id="stock" class="used-stock" aria-labelledby="titre-stock"><div><h2 id="titre-stock">Nos véhicules d’occasion</h2><p>Des véhicules rigoureusement sélectionnés pour votre tranquillité d’esprit.</p></div><p class="used-count" aria-live="polite">{{ vehicules|length }} véhicule{{ vehicules|length > 1 ? 's' }} disponible{{ vehicules|length > 1 ? 's' }}</p><div class="used-grid">{% for vehicule in vehicules %}{% include 'components/_vehicle_card.html.twig' with {vehicule:vehicule} only %}{% else %}<div class="empty-state"><h3>Aucun véhicule disponible</h3><p>Le stock évolue régulièrement. Contactez le garage pour préciser votre recherche.</p><a href="{{ path('rendez_vous',{type:'question'}) }}">Nous contacter</a></div>{% endfor %}</div></section>
+<div class="row g-4 used-lower"><div class="col-lg-8"><section class="used-why" aria-labelledby="pourquoi-vo"><h2 id="pourquoi-vo">Pourquoi acheter chez nous&nbsp;?</h2><div>{% for item in [{icon:'check',title:'Véhicules sélectionnés',text:'Contrôle complet avant la vente'},{icon:'shield',title:'Garantie',text:'Jusqu’à 12 mois pièces et main d’œuvre'},{icon:'document',title:'Dossier complet',text:'Historique et kilométrage certifiés'},{icon:'people',title:'Reprise de votre véhicule',text:'Estimation gratuite et sans engagement'}] %}<article><span>{{ icons.svg(item.icon) }}</span><strong>{{ item.title }}</strong><p>{{ item.text }}</p></article>{% endfor %}</div></section><section class="mechanic-faq used-faq" aria-labelledby="faq-vo"><h2 id="faq-vo">Questions fréquentes</h2>{% for item in [{q:'Les véhicules sont-ils garantis ?',a:'La durée et les conditions de garantie sont indiquées sur chaque fiche véhicule.'},{q:'Les véhicules sont-ils révisés ?',a:'Chaque véhicule est contrôlé avant sa mise en vente.'},{q:'Puis-je faire reprendre mon ancien véhicule ?',a:'Oui, une estimation peut être réalisée sans engagement.'},{q:'Est-il possible de financer l’achat ?',a:'Contactez le garage pour connaître les solutions disponibles.'}] %}<details><summary>{{ item.q }}</summary><p>{{ item.a }}</p></details>{% endfor %}</section></div>
+<aside class="col-lg-4"><section class="used-sell"><h2>Vous avez un véhicule à vendre&nbsp;?</h2><p>Nous rachetons votre véhicule, même sans obligation d’achat.</p><a class="btn btn-light" href="{{ path('contact') }}">{{ icons.svg('vehicle') }} Obtenir une estimation</a></section><section class="used-advice"><h2>Besoin d’un conseil&nbsp;?</h2><p>Notre équipe est à votre disposition pour vous accompagner dans votre projet.</p>{% if site.telephone %}<a class="btn btn-outline-primary" href="tel:{{ telephone_uri(site.telephone) }}">{{ icons.svg('phone') }} {{ site.telephone }}</a>{% endif %}<a class="btn btn-primary" href="{{ path('contact') }}">{{ icons.svg('mail') }} Nous contacter</a></section></aside></div>
+</div></main>
 {% endblock %}

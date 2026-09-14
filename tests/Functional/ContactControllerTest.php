@@ -19,17 +19,17 @@ final class ContactControllerTest extends DatabaseWebTestCase
 
     public function testAfficheLeFormulaire(): void
     {
-        $crawler = $this->client->request('GET', '/contact');
+        $crawler = $this->client->request('GET', '/rendez-vous');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('Nous contacter', $crawler->filterXPath('//h1')->text());
+        self::assertStringContainsString('Prendre rendez-vous', $crawler->filterXPath('//h1')->text());
         self::assertCount(1, $crawler->filterXPath('//input[@name="demande[_token]"]'));
         self::assertCount(1, $crawler->filterXPath('//input[@name="demande[siteWeb]"]'));
     }
 
     public function testRefuseUneDemandeSansCoordonnee(): void
     {
-        $crawler = $this->client->request('GET', '/contact');
+        $crawler = $this->client->request('GET', '/rendez-vous');
         $form = $crawler->selectButton('Envoyer ma demande')->form([
             'demande[type]' => 'question',
             'demande[nom]' => 'Jean Dupont',
@@ -50,7 +50,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
         $turnstile->expects(self::once())->method('estValide')->willReturn(true);
         static::getContainer()->set(TurnstileValidator::class, $turnstile);
 
-        $crawler = $this->client->request('GET', '/contact');
+        $crawler = $this->client->request('GET', '/rendez-vous');
         $form = $crawler->selectButton('Envoyer ma demande')->form([
             'demande[type]' => 'devis',
             'demande[nom]' => 'Jean Dupont',
@@ -62,7 +62,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
 
         $this->client->submit($form);
 
-        self::assertResponseRedirects('/contact/confirmation');
+        self::assertResponseRedirects('/rendez-vous/confirmation');
         $demandes = $this->entityManager->getRepository(Demande::class)->findAll();
         self::assertCount(1, $demandes);
         self::assertSame('AB123CD', $demandes[0]->getImmatriculation());
@@ -81,7 +81,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
         $turnstile->expects(self::never())->method('estValide');
         static::getContainer()->set(TurnstileValidator::class, $turnstile);
 
-        $crawler = $this->client->request('GET', '/contact');
+        $crawler = $this->client->request('GET', '/rendez-vous');
         $form = $crawler->selectButton('Envoyer ma demande')->form([
             'demande[type]' => 'question',
             'demande[nom]' => 'Robot',
@@ -91,7 +91,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
 
         $this->client->submit($form);
 
-        self::assertResponseRedirects('/contact/confirmation');
+        self::assertResponseRedirects('/rendez-vous/confirmation');
         self::assertSame(0, $this->entityManager->getRepository(Demande::class)->count([]));
     }
 
@@ -103,7 +103,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
         static::getContainer()->set(TurnstileValidator::class, $turnstile);
 
         for ($tentative = 0; $tentative < 2; ++$tentative) {
-            $crawler = $this->client->request('GET', '/contact');
+            $crawler = $this->client->request('GET', '/rendez-vous');
             $form = $crawler->selectButton('Envoyer ma demande')->form([
                 'demande[type]' => 'question',
                 'demande[nom]' => 'Jean Dupont',
@@ -112,7 +112,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
                 'demande[cfTurnstileResponse]' => 'jeton-test',
             ]);
             $this->client->submit($form);
-            self::assertResponseRedirects('/contact/confirmation');
+            self::assertResponseRedirects('/rendez-vous/confirmation');
 
             $transport = static::getContainer()->get('messenger.transport.async');
             self::assertInstanceOf(InMemoryTransport::class, $transport);
@@ -130,7 +130,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
         static::getContainer()->set(TurnstileValidator::class, $turnstile);
 
         for ($tentative = 1; $tentative <= 6; ++$tentative) {
-            $crawler = $this->client->request('GET', '/contact');
+            $crawler = $this->client->request('GET', '/rendez-vous');
             $form = $crawler->selectButton('Envoyer ma demande')->form([
                 'demande[type]' => 'question',
                 'demande[nom]' => 'Visiteur '.$tentative,
@@ -141,7 +141,7 @@ final class ContactControllerTest extends DatabaseWebTestCase
             $this->client->submit($form);
 
             if ($tentative <= 5) {
-                self::assertResponseRedirects('/contact/confirmation');
+                self::assertResponseRedirects('/rendez-vous/confirmation');
             }
         }
 

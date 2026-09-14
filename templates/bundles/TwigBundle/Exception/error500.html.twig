@@ -1,0 +1,4 @@
+{% extends 'base.html.twig' %}
+{% block title %}Service indisponible — {{ parent() }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex,nofollow">{% endblock %}
+{% block body %}<section class="section-space"><div class="container container-etroit text-center"><p class="section-eyebrow">Erreur</p><h1>Le service est momentanément indisponible.</h1><p>Merci de réessayer dans quelques instants ou de contacter le garage par téléphone.</p><a class="btn btn-primary" href="{{ path('accueil') }}">Revenir à l’accueil</a></div></section>{% endblock %}

@@ -1,0 +1,7 @@
+{% set bandeau = bandeau_actif() %}
+{% if bandeau %}
+    <aside class="bandeau-exceptionnel bandeau-exceptionnel--{{ bandeau.niveau.value }}" data-controller="bandeau" data-bandeau-id-value="{{ bandeau.id }}" aria-label="Information importante">
+        <span>{{ bandeau.message }}</span>
+        <button class="btn-close bandeau-exceptionnel__close" type="button" data-action="bandeau#close" aria-label="Masquer cette information"></button>
+    </aside>
+{% endif %}

@@ -35,6 +35,8 @@ class ParametresSiteType extends AbstractType
             ->add('urlFicheGoogle', UrlType::class, ['required' => false])
             ->add('urlLeboncoin', UrlType::class, ['required' => false])
             ->add('numeroWhatsapp', TelType::class, ['required' => false])
+            ->add('urlFacebook', UrlType::class, ['required' => false])
+            ->add('urlInstagram', UrlType::class, ['required' => false])
             ->add('delaiReponseJoursOuvres', IntegerType::class);
     }
 

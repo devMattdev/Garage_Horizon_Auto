@@ -1,0 +1,55 @@
+{% set site = parametres_site() %}
+{% set route = app.request.attributes.get('_route')|default('') %}
+{% set ouvert = garage_ouvert() %}
+{% set familles = [
+    {valeur: 'entretien', libelle: 'Entretien'},
+    {valeur: 'mecanique', libelle: 'Mécanique'},
+    {valeur: 'pneumatique', libelle: 'Pneumatiques'},
+    {valeur: 'climatisation', libelle: 'Climatisation'},
+    {valeur: 'diagnostic', libelle: 'Diagnostic'},
+    {valeur: 'controle_technique', libelle: 'Contrôle technique'},
+] %}
+<header class="site-header" data-controller="menu-mobile" data-action="keydown->menu-mobile#keydown">
+    <div class="container-fluid px-xl-5 site-header__inner align-items-center justify-content-between">
+        <div class="site-header__mobile w-100 align-items-center justify-content-between gap-2">
+            <a class="brand" href="{{ path('accueil') }}" aria-label="{{ site.raisonSociale ?: 'Horizon Auto' }} — accueil"><img class="brand__mark" src="{{ asset('images/logo/logo-horizon-auto-80.png') }}" alt="" width="240" height="80" loading="eager"></a>
+            <div class="d-flex align-items-center gap-2">
+                {% if site.telephone %}<a class="btn btn-outline-primary btn-sm" href="tel:{{ telephone_uri(site.telephone) }}">Appeler</a>{% endif %}
+                <button class="btn menu-toggle p-3" type="button" hidden data-menu-mobile-target="button" data-action="menu-mobile#toggle" aria-controls="menu-mobile" aria-expanded="false" aria-label="Ouvrir le menu"><span class="menu-toggle__bars" aria-hidden="true"></span></button>
+            </div>
+        </div>
+        <div class="site-header__desktop w-100 align-items-center justify-content-between gap-3 py-2">
+            <a class="brand" href="{{ path('accueil') }}" aria-label="{{ site.raisonSociale ?: 'Horizon Auto' }} — accueil"><img class="brand__mark" src="{{ asset('images/logo/logo-horizon-auto-80.png') }}" alt="" width="240" height="80" loading="eager"></a>
+            <nav aria-label="Navigation principale"><ul class="nav flex-nowrap align-items-center">
+                <li><a class="site-nav__link" href="{{ path('accueil') }}"{{ route == 'accueil' ? ' aria-current="page"'|raw }}>Accueil</a></li>
+                <li class="nav-dropdown">
+                    <details>
+                        <summary class="site-nav__link"{{ route starts with 'prestation' ? ' aria-current="page"'|raw }}>Prestations</summary>
+                        <ul class="nav-dropdown__menu">
+                            {% for famille in familles %}<li><a href="{{ path('prestations_index', {famille: famille.valeur}) }}">{{ famille.libelle }}</a></li>{% endfor %}
+                            <li><a href="{{ path('prestations_index') }}"><strong>Toutes les prestations</strong></a></li>
+                        </ul>
+                    </details>
+                </li>
+                <li><a class="site-nav__link" href="{{ path('vehicules_index') }}"{{ route starts with 'vehicule' ? ' aria-current="page"'|raw }}>Véhicules d’occasion</a></li>
+                <li><a class="site-nav__link" href="{{ path('professionnels') }}"{{ route == 'professionnels' ? ' aria-current="page"'|raw }}>Professionnels</a></li>
+                <li><a class="site-nav__link" href="{{ path('garage') }}"{{ route == 'garage' ? ' aria-current="page"'|raw }}>À propos</a></li>
+                <li><a class="site-nav__link" href="{{ path('faq') }}"{{ route == 'faq' ? ' aria-current="page"'|raw }}>FAQ</a></li>
+                <li><a class="site-nav__link" href="{{ path('contact') }}"{{ route == 'contact' ? ' aria-current="page"'|raw }}>Contact</a></li>
+            </ul></nav>
+            <div class="d-flex align-items-center gap-3">
+                <a class="btn btn-primary header-appointment" href="{{ path('rendez_vous') }}">Demander un rendez-vous</a>
+            </div>
+        </div>
+    </div>
+    <nav id="menu-mobile" class="site-nav-mobile container" data-menu-mobile-target="panel" aria-label="Navigation mobile"><ul>
+        <li><a class="site-nav__link" href="{{ path('accueil') }}">Accueil</a></li>
+        <li><a class="site-nav__link" href="{{ path('prestations_index') }}">Prestations</a></li>
+        <li><a class="site-nav__link" href="{{ path('vehicules_index') }}">Véhicules d’occasion</a></li>
+        <li><a class="site-nav__link" href="{{ path('professionnels') }}">Professionnels</a></li>
+        <li><a class="site-nav__link" href="{{ path('garage') }}">À propos</a></li>
+        <li><a class="site-nav__link" href="{{ path('faq') }}">Questions fréquentes</a></li>
+        <li><a class="site-nav__link" href="{{ path('contact') }}">Contact et accès</a></li>
+        <li><a class="btn btn-primary w-100 mt-2" href="{{ path('rendez_vous') }}">Prendre rendez-vous</a></li>
+    </ul></nav>
+</header>

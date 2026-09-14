@@ -29,7 +29,10 @@ Le site sert un visiteur pressé, souvent sur mobile, souvent contrarié (panne,
 2. **Le formulaire est le second choix, pas le premier.** Il sert quand le garage est fermé ou quand le visiteur ne veut pas appeler.
 3. **Rien ne doit promettre plus que ce que le garage peut tenir.** La secrétaire répond du lundi au vendredi : le site l'affiche explicitement.
 
-Registre visuel : sobre, lisible, professionnel. Pas d'imagerie générique de moteur en gros plan, pas de dégradé, pas d'animation décorative. Les photos réelles de l'atelier et de l'équipe portent la crédibilité mieux que n'importe quel effet.
+Registre visuel : rassurant et démonstratif plutôt que minimal — le client final a demandé un accueil plus riche qu'un site institutionnel sobre (bandeau utilitaire, badges de réassurance, grille de pictogrammes, photo d'atelier en en-tête). Ce registre reste cadré par trois garde-fous :
+- **Aucune donnée inventée.** Chaque badge, chiffre ou engagement affiché doit correspondre à une règle réellement appliquée par le garage (délai de réponse configuré en back-office, politique de devis, etc.) ou rester volontairement générique. Les labels, certifications ou services non confirmés par le client (ex. agrément qualité, véhicule de courtoisie) ne sont ajoutés qu'après validation explicite.
+- **Les photos sont celles validées par le client**, même en l'absence de séance photo dédiée à ce stade ; pas de bandeau vidéo, pas d'animation décorative au défilement.
+- **Le téléphone reste l'action principale** : la photo et les pictogrammes appuient le message, ils ne le remplacent pas — le bouton d'appel et « Prendre rendez-vous » restent visibles sans défilement sur la page d'accueil.
 
 ---
 
@@ -45,7 +48,8 @@ Registre visuel : sobre, lisible, professionnel. Pas d'imagerie générique de m
 /rendez-vous/confirmation           Confirmation de soumission
 /questions-frequentes               FAQ
 /garage-automobile/{commune}        Page locale
-/le-garage                          Présentation, équipe, labels
+/professionnels                     Offre dédiée aux professionnels (flotte, devis groupés)
+/le-garage                          Présentation, équipe, labels (« À propos » dans le menu)
 /contact                            Coordonnées, plan, horaires
 /mentions-legales
 /politique-de-confidentialite
@@ -59,9 +63,10 @@ Profondeur maximale : deux niveaux depuis l'accueil. Aucune page ne doit demande
 
 ## 4. Navigation
 
+**Barre utilitaire (bureau uniquement)** : adresse, téléphone, courriel à gauche ; résumé des horaires et liens Facebook/Instagram à droite — chaque élément affiché seulement si renseigné en back-office. Masquée sur mobile pour ne pas alourdir l'en-tête.
 **En-tête (mobile)** : logo, bouton d'appel, bouton de menu. Barre collante compacte, hauteur inférieure à 64 px.
 **En-tête (bureau)** : logo, menu horizontal, état d'ouverture, numéro, bouton « Demander un rendez-vous ».
-**Menu** : Prestations · Occasions · Le garage · FAQ · Contact. Cinq entrées, pas davantage.
+**Menu** : Accueil · Prestations (menu déroulant par famille, `<details>` natif) · Véhicules d'occasion · Professionnels · À propos · FAQ · Contact.
 **Barre d'action mobile fixe en bas** : « Appeler » · « Demander un RDV » · « Itinéraire ». Hauteur 56 px, compensée par une marge basse sur le contenu pour ne jamais masquer de texte.
 **Pied de page** : coordonnées, horaires, zone d'intervention, liens légaux, lien vers la fiche Google, réseaux sociaux actifs.
 **Fil d'Ariane** : présent sur toutes les pages sauf l'accueil, balisé en `BreadcrumbList`.
@@ -101,6 +106,10 @@ Héritage à trois niveaux maximum. Les composants Twig sont préférés aux inc
 | `carte-vehicule` | Vignette de véhicule | Prix, kilométrage, année, énergie visibles sans survol |
 | `galerie-vehicule` | Photos d'un véhicule | Navigation clavier, textes alternatifs, pas de défilement automatique |
 | `bloc-reassurance` | Note Google, labels, ancienneté | Aucune donnée inventée |
+| `barre-utilitaire` | Adresse, téléphone, courriel en bureau | Masquée sur mobile, chaque élément conditionné à sa présence en back-office |
+| `hero-photo` | Photo d'atelier + dégradé + promesse | Contraste du texte garanti par un dégradé, pas par la seule photo ; `alt` descriptif |
+| `badge-reassurance` | Puce à coche + engagement court | Contenu réel ou générique uniquement, jamais une certification non confirmée |
+| `grille-pictogrammes` | Familles de prestations illustrées | Jeu d'icônes SVG unique (section 7), pas de fonte d'icônes |
 | `bandeau-exceptionnel` | Message temporaire | `role="status"`, fermable, état mémorisé en session |
 | `formulaire-demande` | Formulaire principal | Voir section 9 |
 | `accordeon-faq` | Questions / réponses | `<details>` natif ou motif ARIA complet |
@@ -118,7 +127,7 @@ Polices auto-hébergées, format WOFF2, `font-display: swap`, deux graisses maxi
 
 Images : WebP avec repli JPEG, `srcset` et `sizes`, `width` et `height` renseignés systématiquement pour éviter tout décalage de mise en page, `loading="lazy"` sauf sur l'image principale de l'accueil.
 
-Icônes : jeu SVG en ligne, limité à une dizaine de symboles. Pas de fonte d'icônes.
+Icônes : jeu SVG en ligne unique et limité (une quinzaine de symboles couvrant la navigation, les coordonnées, les familles de prestations et les badges de réassurance). Pas de fonte d'icônes.
 
 ---
 
@@ -168,7 +177,7 @@ Au moins un moyen de contact est exigé (RG-01) : la règle est annoncée avant 
 
 ## 10. Interfaces clés
 
-**Accueil** — Bandeau éventuel, en-tête avec état d'ouverture, bloc principal (nom, promesse, ville, bouton d'appel, bouton de demande), quatre prestations mises en avant, réassurance, extrait de FAQ, aperçu VO si stock, plan et horaires.
+**Accueil** — Barre utilitaire, bandeau éventuel, en-tête avec état d'ouverture, hero photo (photo validée par le client + dégradé pour la lisibilité du texte) avec promesse, ville, badges de réassurance (données réelles ou génériques, jamais inventées) et boutons d'appel/de demande, grille de pictogrammes par famille de prestations, prestations mises en avant, section « pourquoi nous choisir » avec encart horaires, aperçu VO si stock, extrait de FAQ, plan et horaires.
 
 **Détail de prestation** — Titre, description, forfait indicatif avec mention de devis, durée indicative, ce qui est inclus, action de demande pré-remplie avec la prestation.
 
@@ -319,14 +328,20 @@ Le site doit renvoyer vers la fiche Google et non l'inverse : la fiche capte dé
 
 ## 21. Éléments à confirmer
 
-1. Charte graphique définitive : couleurs de l'enseigne et du véhicule floqué.
-2. Logo vectoriel : qui le produit, sous quel délai, à quel coût.
-3. Séance photo : date, contenu exact (atelier, équipe, façade, véhicules).
-4. Bouton WhatsApp : conservé ou écarté.
-5. Affichage des avis : note et lien seuls, ou intégration automatisée.
-6. Filtres du catalogue VO : nécessaires ou non selon le stock réel.
-7. Version mineure exacte de Bootstrap 5 à figer à l'installation.
-8. Outil de test bout en bout retenu.
+**Résolus :**
+- Logo : fourni par le client (`assets/images/logo/`), intégré à l'en-tête et au favicon.
+- Photos : photo d'atelier et photo de devanture fournies par le client, intégrées en accueil (optimisées WebP/JPEG). Séance photo dédiée non nécessaire pour l'instant.
+- Bouton WhatsApp : écarté.
+- Avis Google : note et lien seuls (pas d'intégration API) ; en attente de la note réelle du garage pour l'afficher.
+- Filtres du catalogue VO : conditionnés au seuil de six véhicules en stock (déjà implémenté).
+- Bootstrap : verrouillé en 5.3.8 via `composer.lock`.
+- Outil de test bout en bout : Symfony Panther.
+- Certifications et services affichés (« Certifié QualiRépar », « Partenariat contrôle technique », « Véhicule de courtoisie », « Garage indépendant ») : confirmés exacts par le client, intégrés tels quels sur l'accueil.
+
+**Encore ouvert :**
+1. Charte graphique définitive : couleurs de l'enseigne et du véhicule floqué (palette provisoire conservée pour l'instant, à ajuster si une charte réelle est fournie).
+2. Réseaux sociaux : champs Facebook/Instagram ajoutés en back-office (`ParametresSite`) mais non renseignés — la barre utilitaire ne les affiche que si les liens sont saisis.
+3. Note Google réelle à renseigner dès qu'elle est connue.
 
 ---
 
@@ -343,6 +358,7 @@ Le site doit renvoyer vers la fiche Google et non l'inverse : la fiche capte dé
 | Contact et plan d'accès | Moyenne | V1 |
 | Catalogue VO et galerie | Élevée | V1 |
 | Pages locales | Faible | V1 |
+| Page Professionnels | Faible | V1 |
 | Pages système | Faible | V1 |
 | Données structurées et référencement | Moyenne | V1 |
 | Optimisation des performances | Moyenne | V1 |

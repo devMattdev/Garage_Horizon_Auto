@@ -6,6 +6,8 @@ namespace App\Entity;
 
 use App\Enum\FamillePrestation;
 use App\Repository\PrestationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,6 +21,10 @@ class Prestation
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    /** @var Collection<int, PrestationEtape> */
+    #[ORM\OneToMany(targetEntity: PrestationEtape::class, mappedBy: 'prestation', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $etapes;
 
     #[ORM\Column(length: 160)]
     private string $slug;
@@ -59,6 +65,11 @@ class Prestation
 
     #[ORM\Column(length: 320, nullable: true)]
     private ?string $seoDescription = null;
+
+    public function __construct()
+    {
+        $this->etapes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -219,5 +230,47 @@ class Prestation
         $this->seoDescription = $seoDescription;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, PrestationEtape>
+     */
+    public function getEtapes(): Collection
+    {
+        return $this->etapes;
+    }
+
+    /**
+     * @return PrestationEtape[] triées par `ordre` croissant
+     */
+    public function getEtapesTriees(): array
+    {
+        $etapes = $this->etapes->toArray();
+        usort($etapes, static fn (PrestationEtape $a, PrestationEtape $b) => $a->getOrdre() <=> $b->getOrdre());
+
+        return $etapes;
+    }
+
+    public function addEtape(PrestationEtape $etape): static
+    {
+        if (!$this->etapes->contains($etape)) {
+            $this->etapes->add($etape);
+            $etape->setPrestation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEtape(PrestationEtape $etape): static
+    {
+        // orphanRemoval : retirer l'étape de la collection suffit à programmer sa suppression.
+        $this->etapes->removeElement($etape);
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->nom ?? 'Prestation';
     }
 }

@@ -1,11 +1,7 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Demande envoyée — {{ parent() }}{% endblock %}
-
+{% block robots %}<meta name="robots" content="noindex,nofollow">{% endblock %}
 {% block body %}
-    <div class="container py-5 text-center container-etroit-sm">
-        <h1 class="h2">Votre demande a bien été envoyée</h1>
-        <p class="lead">Nous revenons vers vous sous {{ parametres_site().delaiReponseJoursOuvres }} jours ouvrés.</p>
-        <a class="btn btn-outline-primary" href="{{ path('accueil') }}">Retour à l'accueil</a>
-    </div>
+    {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Rendez-vous', url: path('rendez_vous')}, {label: 'Confirmation'}]} %}
+    <section class="section-space"><div class="container container-etroit-sm text-center"><p class="section-eyebrow">Demande transmise</p><h1>Merci, votre demande a bien été envoyée.</h1><p class="lead">Le garage vous recontactera sous {{ parametres_site().delaiReponseJoursOuvres }} jour{{ parametres_site().delaiReponseJoursOuvres > 1 ? 's' }} ouvré{{ parametres_site().delaiReponseJoursOuvres > 1 ? 's' }} pour confirmer la suite.</p><p>En cas d’urgence, {% if parametres_site().telephone %}appelez le <a href="tel:{{ telephone_uri(parametres_site().telephone) }}">{{ parametres_site().telephone }}</a>{% else %}consultez les coordonnées du garage{% endif %}.</p><div class="d-flex justify-content-center flex-wrap gap-2 mt-4"><a class="btn btn-primary" href="{{ path('accueil') }}">Retour à l’accueil</a><a class="btn btn-outline-primary" href="{{ path('contact') }}">Voir les horaires</a></div></div></section>
 {% endblock %}

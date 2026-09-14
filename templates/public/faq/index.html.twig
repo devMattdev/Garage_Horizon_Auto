@@ -1,29 +1,9 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Questions fréquentes — {{ parent() }}{% endblock %}
-
-{% block structured_data %}
-    <script type="application/ld+json">{{ donnees_structurees|json_encode|raw }}</script>
-{% endblock %}
-
+{% extends 'base.html.twig' %}{% import 'components/_icons.html.twig' as icons %}{% set site=parametres_site() %}
+{% block title %}Questions fréquentes — {{ parent() }}{% endblock %}{% block meta_description %}Réponses aux questions fréquentes sur les rendez-vous, devis et services du garage.{% endblock %}
+{% block structured_data %}<script type="application/ld+json" nonce="{{ csp_nonce('script') }}">{{ donnees_structurees|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>{% endblock %}
 {% block body %}
-    <div class="container py-5">
-        <h1 class="h2 mb-4">Questions fréquentes</h1>
-        <div class="accordion" id="accordionFaq">
-            {% for question in questions %}
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ question.id }}">
-                            {{ question.question }}
-                        </button>
-                    </h2>
-                    <div id="faq-{{ question.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionFaq">
-                        <div class="accordion-body">{{ question.reponse|nl2br }}</div>
-                    </div>
-                </div>
-            {% else %}
-                <p>Aucune question publiée pour le moment.</p>
-            {% endfor %}
-        </div>
-    </div>
+<header class="faq-hero"><div class="container"><nav aria-label="Fil d’Ariane"><a href="{{ path('accueil') }}">Accueil</a><span>›</span><b>FAQ</b></nav><div><section><p class="section-eyebrow">Aide</p><h1>Questions fréquentes</h1><p>Les réponses utiles avant de contacter ou de venir au garage.</p></section><div class="faq-illustration" aria-hidden="true"><span>?</span><i>••</i></div></div></div></header>
+<main class="faq-page"><div class="container"><div class="row g-4"><aside class="col-lg-4"><section class="faq-help"><h2>Vous ne trouvez pas la réponse&nbsp;?</h2><p>Notre équipe est à votre écoute pour répondre à toutes vos questions.</p>{% if site.telephone %}<div>{{ icons.svg('phone') }}<p><strong><a href="tel:{{ telephone_uri(site.telephone) }}">{{ site.telephone }}</a></strong><small>Lun - Ven : 8h - 12h / 13h30 - 18h</small></p></div>{% endif %}{% if site.email %}<div>{{ icons.svg('mail') }}<p><strong>Nous écrire</strong><small><a href="mailto:{{ site.email }}">{{ site.email }}</a></small></p></div>{% endif %}<div>{{ icons.svg('pin') }}<p><strong>Nous rendre visite</strong><small>{{ site.adresse }}, {{ site.codePostal }} {{ site.ville }}</small></p></div></section><section class="faq-book"><div>{{ icons.svg('calendar') }}<p><strong>Besoin d’un rendez-vous&nbsp;?</strong><small>Prenez rendez-vous en ligne en quelques clics.</small></p></div><a class="btn btn-primary w-100" href="{{ path('rendez_vous') }}">Prendre rendez-vous →</a></section></aside>
+<section class="col-lg-8 faq-results" aria-label="Liste des questions"><form method="get" role="search"><label>{{ icons.svg('search') }}<span class="visually-hidden">Rechercher une question</span><input type="search" name="q" value="{{ recherche }}" placeholder="Rechercher une question…"><button class="visually-hidden" type="submit">Rechercher</button></label>{% if recherche %}<a href="{{ path('faq') }}">Effacer la recherche</a>{% endif %}</form><div>{% for question in questions %}<details><summary>{{ question.question }}</summary><p>{{ question.reponse|nl2br }}</p></details>{% else %}<div class="empty-state">Aucune question ne correspond à votre recherche.</div>{% endfor %}</div></section></div>
+<section class="faq-final"><span>{{ icons.svg('people') }}</span><div><h2>Une autre question&nbsp;?</h2><p>Notre équipe vous répond rapidement.</p></div><a class="btn btn-outline-dark" href="{{ path('contact') }}">Nous contacter →</a></section></div></main>
 {% endblock %}

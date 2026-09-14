@@ -1,0 +1,11 @@
+{% set site = parametres_site() %}
+<div id="acces" class="map-shell"
+    {% if site.latitude and site.longitude %}
+        data-controller="plan-acces"
+        data-plan-acces-url-value="https://www.openstreetmap.org/export/embed.html?bbox={{ (site.longitude - 0.012)|url_encode }}%2C{{ (site.latitude - 0.008)|url_encode }}%2C{{ (site.longitude + 0.012)|url_encode }}%2C{{ (site.latitude + 0.008)|url_encode }}&amp;layer=mapnik&amp;marker={{ site.latitude|url_encode }}%2C{{ site.longitude|url_encode }}"
+        data-plan-acces-title-value="Plan d’accès à {{ site.raisonSociale ?: 'Horizon Auto' }}"
+    {% endif %}>
+    <div class="map-placeholder">
+        <div><p class="h5">Préparer votre venue</p><p>{{ site.adresse }}<br>{{ site.codePostal }} {{ site.ville }}</p>{% if site.urlFicheGoogle %}<a class="btn btn-outline-primary" href="{{ site.urlFicheGoogle }}">Ouvrir l’itinéraire</a>{% endif %}</div>
+    </div>
+</div>

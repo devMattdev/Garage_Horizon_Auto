@@ -1,0 +1,9 @@
+<article class="service-card">
+    <div class="service-card__body">
+        <p class="section-eyebrow mb-2">{{ prestation.famille.value|replace({'_': ' '})|capitalize }}</p>
+        <h3 class="h5">{{ prestation.nom }}</h3>
+        <p>{{ prestation.resume }}</p>
+        {% if prestation.tarifIndicatif %}<p class="price-note">À partir de {{ prestation.tarifIndicatif|number_format(2, ',', ' ') }} € — devis obligatoire</p>{% endif %}
+        <a class="service-card__link fw-bold" href="{{ path('prestation_detail', {slug: prestation.slug}) }}">Découvrir</a>
+    </div>
+</article>

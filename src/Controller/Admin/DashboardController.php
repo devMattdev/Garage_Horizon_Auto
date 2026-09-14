@@ -60,8 +60,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Tableau de bord', 'fa fa-gauge');
         yield MenuItem::linkTo(DemandeCrudController::class, 'Demandes', 'fa fa-envelope');
         yield MenuItem::linkTo(PrestationCrudController::class, 'Prestations', 'fa fa-screwdriver-wrench');
+        yield MenuItem::linkTo(PrestationEtapeCrudController::class, 'Éléments des prestations', 'fa fa-list-check');
         yield MenuItem::linkTo(VehiculeCrudController::class, 'Véhicules d\'occasion', 'fa fa-car');
         yield MenuItem::linkTo(PhotoVehiculeCrudController::class, 'Photos des véhicules', 'fa fa-images');
+        yield MenuItem::linkTo(MembreEquipeCrudController::class, 'Équipe', 'fa fa-people-group');
         yield MenuItem::linkTo(QuestionFrequenteCrudController::class, 'FAQ', 'fa fa-circle-question');
         yield MenuItem::linkTo(PageLocaleCrudController::class, 'Pages locales', 'fa fa-location-dot');
         yield MenuItem::linkToRoute('Horaires', 'fa fa-clock', 'admin_horaires');

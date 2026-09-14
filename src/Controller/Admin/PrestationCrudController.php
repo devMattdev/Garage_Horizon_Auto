@@ -9,6 +9,7 @@ use App\Enum\FamillePrestation;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
@@ -52,5 +53,6 @@ class PrestationCrudController extends GerantSeulementCrudController
         yield ImageField::new('image')->setBasePath('/uploads/prestations')->setUploadDir('public/uploads/prestations')->setRequired(false)->hideOnIndex();
         yield TextField::new('seoTitre')->setRequired(false)->hideOnIndex();
         yield TextareaField::new('seoDescription')->setRequired(false)->hideOnIndex();
+        yield CollectionField::new('etapes', 'Éléments inclus')->onlyOnDetail();
     }
 }

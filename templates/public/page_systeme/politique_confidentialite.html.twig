@@ -3,6 +3,7 @@
 {% block title %}Politique de confidentialité — {{ parent() }}{% endblock %}
 
 {% block body %}
+    {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Politique de confidentialité'}]} %}
     <div class="container py-5 container-etroit">
         <h1 class="h2 mb-4">Politique de confidentialité</h1>
 

@@ -55,6 +55,12 @@ class ParametresSite
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $numeroWhatsapp = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $urlFacebook = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $urlInstagram = null;
+
     #[ORM\Column]
     private int $delaiReponseJoursOuvres = 2;
 
@@ -203,6 +209,30 @@ class ParametresSite
     public function setNumeroWhatsapp(?string $numeroWhatsapp): static
     {
         $this->numeroWhatsapp = $numeroWhatsapp;
+
+        return $this;
+    }
+
+    public function getUrlFacebook(): ?string
+    {
+        return $this->urlFacebook;
+    }
+
+    public function setUrlFacebook(?string $urlFacebook): static
+    {
+        $this->urlFacebook = $urlFacebook;
+
+        return $this;
+    }
+
+    public function getUrlInstagram(): ?string
+    {
+        return $this->urlInstagram;
+    }
+
+    public function setUrlInstagram(?string $urlInstagram): static
+    {
+        $this->urlInstagram = $urlInstagram;
 
         return $this;
     }

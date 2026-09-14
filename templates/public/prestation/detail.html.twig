@@ -1,29 +1,46 @@
 {% extends 'base.html.twig' %}
-
+{% import 'components/_icons.html.twig' as icons %}
+{% set site = parametres_site() %}
+{% set entretien = prestation.famille.value == 'entretien' %}
 {% block title %}{{ prestation.seoTitre ?: prestation.nom }} — {{ parent() }}{% endblock %}
 {% block meta_description %}{{ prestation.seoDescription ?: prestation.resume }}{% endblock %}
-
-{% block structured_data %}
-    <script type="application/ld+json">{{ donnees_structurees|json_encode|raw }}</script>
-{% endblock %}
-
+{% block structured_data %}<script type="application/ld+json" nonce="{{ csp_nonce('script') }}">{{ donnees_structurees|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>{% endblock %}
 {% block body %}
-    <div class="container py-5">
-        <nav aria-label="Fil d'Ariane" class="mb-3">
-            <a href="{{ path('prestations_index') }}">&larr; Toutes les prestations</a>
-        </nav>
-        <h1 class="h2">{{ prestation.nom }}</h1>
-        <p class="lead">{{ prestation.resume }}</p>
-        <div>{{ prestation.description|nl2br }}</div>
-
-        {% if prestation.tarifIndicatif %}
-            <p class="mt-3">
-                <strong>Forfait indicatif : {{ prestation.tarifIndicatif|number_format(2, ',', ' ') }} €</strong>
-                <br>
-                <small class="text-muted">{{ prestation.mentionTarif ?: 'Prix d\'appel non contractuel, toujours suivi d\'un devis.' }}</small>
-            </p>
-        {% endif %}
-
-        <a class="btn btn-primary mt-3" href="{{ path('contact', {type: 'devis'}) }}">Demander un devis pour cette prestation</a>
+<header class="service-hero">
+    <img class="service-hero__media" src="{{ entretien ? asset('images/img-entretien/image accueil entretien.png') : (prestation.image ? asset(prestation.image) : asset('images/img-accueil/hero-atelier-1600.jpg')) }}" alt="" width="2171" height="724" loading="eager" fetchpriority="high">
+    <div class="service-hero__shade" aria-hidden="true"></div>
+    <div class="container service-hero__content">
+        {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Prestations', url: path('prestations_index')}, {label: prestation.nom}]} %}
+        <h1>{% if entretien %}Entretien <span>&amp; Révision</span>{% else %}{{ prestation.nom }}{% endif %}</h1>
+        <p>{{ prestation.resume }}</p>
+        <div class="d-flex flex-wrap gap-3 mt-3"><a class="btn btn-primary" href="{{ path('rendez_vous', {prestation: prestation.slug}) }}">{{ icons.svg('calendar') }} Demander un rendez-vous</a>{% if site.telephone %}<a class="btn btn-outline-light" href="tel:{{ telephone_uri(site.telephone) }}">{{ icons.svg('phone') }} {{ site.telephone }}</a>{% endif %}</div>
     </div>
+</header>
+<main class="service-detail"><div class="container"><div class="row g-4" data-controller="prestation-etape">
+<div class="col-lg-8">
+    <section aria-labelledby="contenu-prestation">
+        <h2 id="contenu-prestation" class="h4">{{ entretien ? 'Un entretien complet pour un véhicule en pleine forme' : 'En quoi consiste cette prestation ?' }}</h2>
+        <div class="service-intro">{{ prestation.description|nl2br }}</div>
+        {% if prestation.etapes|length > 0 %}<div class="service-steps">{% for etape in prestation.etapesTriees %}<button type="button" class="service-step" data-action="prestation-etape#afficher" data-prestation-etape-titre-param="{{ etape.titre }}" data-prestation-etape-description-param="{{ etape.description }}" data-prestation-etape-montant-param="{{ etape.prix ? etape.prix|number_format(0, ',', ' ') ~ ' €' : '' }}"><span class="service-step__icon">{{ icons.svg(etape.icone) }}</span><h3>{{ etape.titre }}</h3><p>{{ etape.description }}</p>{% if etape.prix %}<p class="service-step__prix">{{ etape.prix|number_format(0, ',', ' ') }} €</p>{% endif %}</button>{% endfor %}</div>
+        <p class="service-steps__aide small">Cliquez sur un élément pour voir son descriptif et son tarif dans l’encart ci-contre.</p>{% endif %}
+    </section>
+    <section class="service-trust" aria-labelledby="confiance"><h2 id="confiance" class="h4">Un garage de confiance à vos côtés</h2><div class="service-trust__grid">{% for item in [
+        {icon:'people', title:'Garage indépendant', text:'Un service personnalisé et de proximité'}, {icon:'badge', title:'Certifié QualiRépar', text:'Un gage de qualité et de confiance'}, {icon:'document', title:'Devis avant intervention', text:'Des tarifs clairs et sans mauvaise surprise'}, {icon:'home-engine', title:'Véhicule de courtoisie', text:'Pour rester mobile pendant l’intervention'}
+    ] %}<div class="service-trust__item"><span>{{ icons.svg(item.icon) }}</span><div><strong>{{ item.title }}</strong><small>{{ item.text }}</small></div></div>{% endfor %}</div></section>
+    {% if entretien %}<div class="row g-4 service-bottom">
+        <section class="col-md-7" aria-labelledby="benefices"><h2 id="benefices" class="h4">Pourquoi faire l’entretien de votre véhicule&nbsp;?</h2><div class="benefit-grid">{% for item in [{title:'Plus de sécurité', text:'Un véhicule fiable au quotidien'}, {title:'Meilleures performances', text:'Un moteur agréable plus longtemps'}, {title:'Économies à long terme', text:'Moins de pannes et de réparations coûteuses'}, {title:'Préservation de la valeur', text:'Un suivi d’entretien valorise votre véhicule'}] %}<div><span>{{ icons.svg('shield') }}</span><strong>{{ item.title }}</strong><small>{{ item.text }}</small></div>{% endfor %}</div></section>
+        <section class="col-md-5" aria-labelledby="faq-entretien"><h2 id="faq-entretien" class="h4">Questions fréquentes</h2><div class="service-faq">{% for item in [{q:'Quand faire la révision de mon véhicule ?', a:'La périodicité dépend du constructeur, de l’âge et du kilométrage du véhicule.'}, {q:'Combien coûte un entretien ?', a:'Le tarif dépend du modèle et des opérations prévues. Un devis est établi avant intervention.'}, {q:'Travaillez-vous toutes les marques ?', a:'Oui, le garage intervient sur les véhicules de toutes marques.'}, {q:'Fournissez-vous un véhicule de courtoisie ?', a:'Contactez le garage pour vérifier sa disponibilité lors de votre rendez-vous.'}] %}<details><summary>{{ item.q }}</summary><p>{{ item.a }}</p></details>{% endfor %}</div></section>
+    </div>{% endif %}
+</div>
+<aside class="col-lg-4"><div class="service-sidebar">
+    <section class="service-price" aria-label="Tarif indicatif"><span class="service-price__tag">{{ icons.svg('home-oil') }}</span><div>
+        <strong data-prestation-etape-target="titre">{{ entretien ? 'Entretien / Révision' : prestation.nom }}</strong>
+        <small data-prestation-etape-target="label"{{ prestation.tarifIndicatif ? '' : ' hidden' }}>À partir de</small>
+        <b data-prestation-etape-target="montant"{{ prestation.tarifIndicatif ? '' : ' hidden' }}>{{ prestation.tarifIndicatif|number_format(0, ',', ' ') }} €</b>
+        <p data-prestation-etape-target="description">{{ prestation.tarifIndicatif ? (prestation.mentionTarif ?: 'Un devis détaillé et personnalisé avant toute intervention.') : 'Tarif sur devis selon votre véhicule et l’intervention.' }}</p>
+    </div></section>
+    <section class="service-booking"><h2 class="h5">{{ icons.svg('calendar') }} Prenez rendez-vous dès maintenant</h2><p>Notre équipe est à votre écoute pour planifier l’entretien de votre véhicule.</p><a class="btn btn-primary w-100" href="{{ path('rendez_vous', {prestation: prestation.slug}) }}">{{ icons.svg('calendar') }} Demander un rendez-vous</a>{% if site.telephone %}<a class="btn btn-outline-primary w-100 mt-2" href="tel:{{ telephone_uri(site.telephone) }}">{{ icons.svg('phone') }} {{ site.telephone }}</a>{% endif %}</section>
+    <section class="service-hours"><h2 class="h5">{{ icons.svg('clock') }} Horaires d’ouverture</h2>{% for groupe in horaires_groupes() %}<div><span>{{ groupe.jours }}</span><strong>{{ groupe.horaires }}</strong></div>{% endfor %}{% if site.urlFicheGoogle %}<a href="{{ site.urlFicheGoogle }}">{{ icons.svg('pin') }} Voir l’itinéraire</a>{% endif %}</section>
+</div></aside>
+</div></div></main>
 {% endblock %}

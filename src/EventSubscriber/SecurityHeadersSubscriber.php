@@ -56,7 +56,7 @@ final class SecurityHeadersSubscriber implements EventSubscriberInterface
             \sprintf("style-src 'self' 'nonce-%s'", $styleNonce),
             "img-src 'self' data:",
             "font-src 'self'",
-            'frame-src https://challenges.cloudflare.com',
+            'frame-src https://challenges.cloudflare.com https://www.openstreetmap.org',
             "connect-src 'self' https://challenges.cloudflare.com",
             "base-uri 'self'",
             "form-action 'self'",

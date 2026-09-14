@@ -1,57 +1,49 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Contact — {{ parent() }}{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {% if turnstile_site_key %}
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    {% endif %}
-{% endblock %}
-
+{% block title %}Prendre rendez-vous ou demander un devis — {{ parent() }}{% endblock %}
+{% block meta_description %}Envoyez une demande de rendez-vous, de devis ou une question au garage.{% endblock %}
+{% block robots %}<meta name="robots" content="noindex,follow">{% endblock %}
+{% block javascripts %}{{ parent() }}{% if turnstile_site_key %}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>{% endif %}{% endblock %}
 {% block body %}
-    <div class="container py-5 container-etroit">
-        <h1 class="h2 mb-4">Nous contacter</h1>
-        <p class="text-muted">
-            {{ parametres_site().raisonSociale }} — {{ parametres_site().telephone }}<br>
-            Réponse sous {{ parametres_site().delaiReponseJoursOuvres }} jours ouvrés.
-        </p>
-
-        {{ form_start(form) }}
-            {{ form_errors(form) }}
-            {{ form_row(form.type) }}
+    {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Rendez-vous'}]} %}
+    <header class="page-hero"><div class="container container-etroit"><p class="section-eyebrow">Votre demande</p><h1>Prendre rendez-vous</h1><p class="hero__lead">Décrivez votre besoin. L’envoi du formulaire ne confirme pas le créneau : le garage vous recontacte sous {{ parametres_site().delaiReponseJoursOuvres }} jour{{ parametres_site().delaiReponseJoursOuvres > 1 ? 's' }} ouvré{{ parametres_site().delaiReponseJoursOuvres > 1 ? 's' }}.</p></div></header>
+    <section class="section-space"><div class="container container-etroit">
+        {{ form_start(form, {attr: {class: 'form-shell', 'data-controller': 'formulaire-demande'}}) }}
+            {% if form.vars.submitted and not form.vars.valid %}
+                <div class="alert alert-danger form-errors" role="alert" data-formulaire-demande-target="errorSummary">
+                    <h2 class="h5">La demande n’a pas pu être envoyée</h2>
+                    <p>Corrigez les champs signalés ci-dessous :</p>
+                    <ul class="form-errors__list">
+                        {% for child in form %}
+                            {% if child.vars.errors|length > 0 %}
+                                <li><a href="#{{ child.vars.id }}">{{ child.vars.label|default(child.vars.name) }}</a> — {% for error in child.vars.errors %}{{ error.message }}{% if not loop.last %} {% endif %}{% endfor %}</li>
+                            {% endif %}
+                        {% endfor %}
+                        {% for error in form.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <p class="small"><span aria-hidden="true">*</span> Les champs marqués d’un astérisque sont obligatoires.</p>
+            <div class="form-type-choices">{{ form_row(form.type) }}</div>
             {{ form_row(form.nom) }}
-            <div class="row">
-                <div class="col-md-6">{{ form_row(form.telephone) }}</div>
-                <div class="col-md-6">{{ form_row(form.email) }}</div>
-            </div>
+            <p class="mb-2"><strong>Comment pouvons-nous vous répondre ?</strong> Renseignez au moins un téléphone ou un courriel.</p>
+            {{ form_row(form.telephone) }}
+            {{ form_row(form.email) }}
             {{ form_row(form.immatriculation) }}
             {{ form_row(form.kilometrage) }}
-            {{ form_row(form.prestation) }}
-            {{ form_row(form.vehicule) }}
+            <div data-formulaire-demande-target="prestation">{{ form_row(form.prestation) }}</div>
+            <div data-formulaire-demande-target="vehicule">{{ form_row(form.vehicule) }}</div>
             {{ form_row(form.creneauSouhaite) }}
             {{ form_row(form.message) }}
+            <p class="field-counter" data-formulaire-demande-target="counter" aria-live="polite">0 / 2000</p>
             {{ form_row(form.consentementRelance) }}
-
-            <div class="visually-hidden">
-                {{ form_label(form.siteWeb, 'Ne pas remplir ce champ', {label_attr: {for: 'demande_siteWeb'}}) }}
-                {{ form_widget(form.siteWeb, {attr: {tabindex: '-1', autocomplete: 'off'}}) }}
-            </div>
-
-            {% if turnstile_site_key %}
-                <div class="cf-turnstile mb-3" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileSuccess"></div>
-            {% endif %}
+            <p class="small">Vos coordonnées sont utilisées pour répondre à cette demande. Le consentement aux offres commerciales est facultatif. <a href="{{ path('politique_confidentialite') }}">En savoir plus</a>.</p>
+            <div class="hp-field">{{ form_label(form.siteWeb, 'Ne pas remplir ce champ') }}{{ form_widget(form.siteWeb) }}</div>
+            {% if turnstile_site_key %}<div class="cf-turnstile mb-3" data-sitekey="{{ turnstile_site_key }}" data-callback="onTurnstileSuccess"></div>{% endif %}
             {{ form_widget(form.cfTurnstileResponse, {attr: {id: 'demande_cfTurnstileResponseHidden', type: 'hidden'}}) }}
-
-            <button type="submit" class="btn btn-primary">Envoyer ma demande</button>
+            <button type="submit" class="btn btn-primary btn-lg">Envoyer ma demande</button>
         {{ form_end(form) }}
-    </div>
-
-    {% if turnstile_site_key %}
-        <script nonce="{{ csp_nonce('script') }}">
-            function onTurnstileSuccess(token) {
-                document.getElementById('demande_cfTurnstileResponseHidden').value = token;
-            }
-        </script>
-    {% endif %}
+    </div></section>
+    {% if turnstile_site_key %}<script nonce="{{ csp_nonce('script') }}">function onTurnstileSuccess(token){document.getElementById('demande_cfTurnstileResponseHidden').value=token;}</script>{% endif %}
 {% endblock %}

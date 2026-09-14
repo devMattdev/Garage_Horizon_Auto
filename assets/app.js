@@ -1,2 +1,2 @@
 import './stimulus_bootstrap.js';
-import 'bootstrap';
+document.documentElement.classList.add('js');

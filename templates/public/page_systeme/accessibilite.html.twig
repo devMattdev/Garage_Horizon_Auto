@@ -3,6 +3,7 @@
 {% block title %}Déclaration d'accessibilité — {{ parent() }}{% endblock %}
 
 {% block body %}
+    {% include 'components/_breadcrumb.html.twig' with {items: [{label: 'Accueil', url: path('accueil')}, {label: 'Accessibilité'}]} %}
     <div class="container py-5 container-etroit">
         <h1 class="h2 mb-4">Déclaration d'accessibilité</h1>
 

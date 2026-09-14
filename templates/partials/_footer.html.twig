@@ -1,0 +1,9 @@
+{% set site = parametres_site() %}
+<footer class="site-footer mt-5 pt-5"><div class="container">
+    <div class="row gy-4 pb-4">
+        <div class="col-md-5"><p class="h5 text-white">{{ site.raisonSociale ?: 'Horizon Auto' }}</p>{% if site.adresse %}<address class="mb-2">{{ site.adresse }}<br>{{ site.codePostal }} {{ site.ville }}</address>{% endif %}{% if site.telephone %}<a href="tel:{{ telephone_uri(site.telephone) }}">{{ site.telephone }}</a>{% endif %}</div>
+        <div class="col-6 col-md-3"><p class="h6 text-white">Navigation</p><ul class="list-unstyled"><li><a href="{{ path('prestations_index') }}">Prestations</a></li><li><a href="{{ path('vehicules_index') }}">Occasions</a></li><li><a href="{{ path('garage') }}">Le garage</a></li><li><a href="{{ path('contact') }}">Contact</a></li></ul></div>
+        <div class="col-6 col-md-4"><p class="h6 text-white">Informations</p><ul class="list-unstyled"><li><a href="{{ path('faq') }}">Questions fréquentes</a></li><li><a href="{{ path('mentions_legales') }}">Mentions légales</a></li><li><a href="{{ path('politique_confidentialite') }}">Confidentialité</a></li><li><a href="{{ path('declaration_accessibilite') }}">Accessibilité</a></li><li><a href="{{ path('plan_site') }}">Plan du site</a></li></ul></div>
+    </div>
+    <div class="site-footer__legal py-3 small">© {{ 'now'|date('Y') }} {{ site.raisonSociale ?: 'Horizon Auto' }}.</div>
+</div></footer>

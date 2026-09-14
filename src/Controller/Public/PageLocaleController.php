@@ -11,10 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PageLocaleController extends AbstractController
 {
-    #[Route('/secteur/{slug}', name: 'page_locale_detail')]
-    public function __invoke(string $slug, PageLocaleRepository $pageLocaleRepository): Response
+    #[Route('/garage-automobile/{commune}', name: 'page_locale_detail')]
+    public function __invoke(string $commune, PageLocaleRepository $pageLocaleRepository): Response
     {
-        $page = $pageLocaleRepository->findActiveParSlug($slug);
+        $page = $pageLocaleRepository->findActiveParSlug($commune);
 
         if (null === $page) {
             throw $this->createNotFoundException();

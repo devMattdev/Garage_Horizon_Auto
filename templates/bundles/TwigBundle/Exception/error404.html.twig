@@ -1,0 +1,4 @@
+{% extends 'base.html.twig' %}
+{% block title %}Page introuvable — {{ parent() }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex,nofollow">{% endblock %}
+{% block body %}<section class="section-space"><div class="container container-etroit text-center"><p class="section-eyebrow">Erreur 404</p><h1>Cette page n’existe pas.</h1><p>Le lien est peut-être ancien ou l’adresse comporte une erreur.</p><a class="btn btn-primary" href="{{ path('accueil') }}">Revenir à l’accueil</a></div></section>{% endblock %}

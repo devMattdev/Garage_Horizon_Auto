@@ -1,0 +1,19 @@
+{% import 'components/_icons.html.twig' as icons %}
+{% set site = parametres_site() %}
+{% set horaires = horaires_resume() %}
+{% if site.adresse or site.telephone or site.email %}
+    <div class="utility-bar d-none d-md-block">
+        <div class="container d-flex utility-bar__inner align-items-center justify-content-between py-1">
+            <div class="d-flex flex-wrap utility-bar__group">
+                {% if site.adresse %}<span class="utility-bar__item">{{ icons.svg('pin') }}{{ site.adresse }}, {{ site.codePostal }} {{ site.ville }}</span>{% endif %}
+                {% if site.telephone %}<a class="utility-bar__item" href="tel:{{ telephone_uri(site.telephone) }}">{{ icons.svg('phone') }}{{ site.telephone }}</a>{% endif %}
+                {% if site.email %}<a class="utility-bar__item" href="mailto:{{ site.email }}">{{ icons.svg('mail') }}{{ site.email }}</a>{% endif %}
+            </div>
+            <div class="d-flex flex-wrap align-items-center utility-bar__group">
+                {% if horaires %}<span class="utility-bar__item">{{ horaires }}</span>{% endif %}
+                {% if site.urlFacebook %}<a class="utility-bar__item" href="{{ site.urlFacebook }}" aria-label="Facebook — {{ site.raisonSociale ?: 'Horizon Auto' }}">{{ icons.svg('facebook') }}</a>{% endif %}
+                {% if site.urlInstagram %}<a class="utility-bar__item" href="{{ site.urlInstagram }}" aria-label="Instagram — {{ site.raisonSociale ?: 'Horizon Auto' }}">{{ icons.svg('instagram') }}</a>{% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
