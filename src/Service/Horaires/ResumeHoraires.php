@@ -56,9 +56,7 @@ class ResumeHoraires
                 $courant = ['debut' => $libelle, 'fin' => $libelle, 'texte' => $texte];
             }
         }
-        if (null !== $courant) {
-            $groupes[] = $courant;
-        }
+        $groupes[] = $courant;
 
         $resultat = [];
         foreach ($groupes as $groupe) {

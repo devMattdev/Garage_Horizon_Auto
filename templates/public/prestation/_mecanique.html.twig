@@ -14,23 +14,23 @@
 <main class="mechanic-page"><div class="container">
     <section class="mechanic-services" aria-label="Prestations mécaniques">
         {% for card in [
-            {title:'Freinage', text:'Plaquettes, disques, liquide de frein', price:'À partir de 99 €'},
-            {title:'Distribution', text:'Courroie ou chaîne de distribution', price:'À partir de 249 €'},
-            {title:'Embrayage', text:'Remplacement complet', price:'À partir de 399 €'},
-            {title:'Suspension', text:'Amortisseurs, ressorts, triangles, rotules', price:'À partir de 149 €'},
-            {title:'Échappement', text:'Silencieux, catalyseur, ligne d’échappement', price:'À partir de 149 €'},
-            {title:'Moteur', text:'Diagnostic et réparation moteur', price:'Sur devis'}
+            {title: 'Freinage', text: 'Plaquettes, disques, liquide de frein', price: 'À partir de 99 €'},
+            {title: 'Distribution', text: 'Courroie ou chaîne de distribution', price: 'À partir de 249 €'},
+            {title: 'Embrayage', text: 'Remplacement complet', price: 'À partir de 399 €'},
+            {title: 'Suspension', text: 'Amortisseurs, ressorts, triangles, rotules', price: 'À partir de 149 €'},
+            {title: 'Échappement', text: 'Silencieux, catalyseur, ligne d’échappement', price: 'À partir de 149 €'},
+            {title: 'Moteur', text: 'Diagnostic et réparation moteur', price: 'Sur devis'}
         ] %}<article class="mechanic-card"><div class="mechanic-card__photo mechanic-card__photo--{{ loop.index }}" role="img" aria-label="{{ card.title }}"></div><h2>{{ card.title }}</h2><p>{{ card.text }}</p><div><strong>{{ card.price }}</strong><a href="{{ path('rendez_vous') }}" aria-label="Demander un rendez-vous pour {{ card.title }}">{{ icons.svg('chevron-right') }}</a></div></article>{% endfor %}
     </section>
 
     <div class="row g-4 mechanic-content">
         <div class="col-lg-8">
             <section class="mechanic-support" aria-labelledby="accompagnement"><h2 id="accompagnement">Un accompagnement complet</h2><div>{% for item in [
-                {icon:'document', title:'Devis avant intervention', text:'Transparent et sans surprise'}, {icon:'home-distribution', title:'Pièces de qualité', text:'Marques d’origine ou équivalentes'}, {icon:'shield', title:'Garantie', text:'Sur toutes nos interventions'}, {icon:'home-engine', title:'Véhicule de courtoisie', text:'Selon disponibilité'}
+                {icon: 'document', title: 'Devis avant intervention', text: 'Transparent et sans surprise'}, {icon: 'home-distribution', title: 'Pièces de qualité', text: 'Marques d’origine ou équivalentes'}, {icon: 'shield', title: 'Garantie', text: 'Sur toutes nos interventions'}, {icon: 'home-engine', title: 'Véhicule de courtoisie', text: 'Selon disponibilité'}
             ] %}<article><span>{{ icons.svg(item.icon) }}</span><div><strong>{{ item.title }}</strong><p>{{ item.text }}</p></div></article>{% endfor %}</div></section>
 
             <section class="mechanic-faq" aria-labelledby="faq-mecanique"><h2 id="faq-mecanique">Questions fréquentes</h2>{% for item in [
-                {q:'Quels sont les signes d’un problème mécanique ?', a:'Bruits inhabituels, vibrations, voyant allumé ou perte de puissance doivent vous amener à faire contrôler le véhicule.'}, {q:'Combien de temps dure une intervention ?', a:'La durée dépend du diagnostic et des pièces nécessaires. Elle vous est précisée avant les travaux.'}, {q:'Les pièces sont-elles garanties ?', a:'Oui, les pièces et interventions bénéficient des garanties applicables.'}, {q:'Puis-je obtenir un devis avant les travaux ?', a:'Oui, un devis détaillé vous est présenté avant toute intervention.'}
+                {q: 'Quels sont les signes d’un problème mécanique ?', a: 'Bruits inhabituels, vibrations, voyant allumé ou perte de puissance doivent vous amener à faire contrôler le véhicule.'}, {q: 'Combien de temps dure une intervention ?', a: 'La durée dépend du diagnostic et des pièces nécessaires. Elle vous est précisée avant les travaux.'}, {q: 'Les pièces sont-elles garanties ?', a: 'Oui, les pièces et interventions bénéficient des garanties applicables.'}, {q: 'Puis-je obtenir un devis avant les travaux ?', a: 'Oui, un devis détaillé vous est présenté avant toute intervention.'}
             ] %}<details><summary>{{ item.q }}</summary><p>{{ item.a }}</p></details>{% endfor %}</section>
         </div>
 

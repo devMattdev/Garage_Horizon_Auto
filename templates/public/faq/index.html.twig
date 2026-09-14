@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}{% import 'components/_icons.html.twig' as icons %}{% set site=parametres_site() %}
+{% extends 'base.html.twig' %}{% import 'components/_icons.html.twig' as icons %}{% set site = parametres_site() %}
 {% block title %}Questions fréquentes — {{ parent() }}{% endblock %}{% block meta_description %}Réponses aux questions fréquentes sur les rendez-vous, devis et services du garage.{% endblock %}
 {% block structured_data %}<script type="application/ld+json" nonce="{{ csp_nonce('script') }}">{{ donnees_structurees|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }}</script>{% endblock %}
 {% block body %}

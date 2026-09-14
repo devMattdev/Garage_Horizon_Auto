@@ -7,14 +7,15 @@ namespace App\Controller\Public;
 use App\Entity\Demande;
 use App\Enum\TypeDemande;
 use App\Form\DemandeType;
+use App\Repository\FermetureExceptionnelleRepository;
+use App\Repository\PlageHoraireRepository;
 use App\Repository\PrestationRepository;
 use App\Repository\VehiculeRepository;
-use App\Repository\PlageHoraireRepository;
-use App\Repository\FermetureExceptionnelleRepository;
 use App\Service\Antiabus\TurnstileValidator;
 use App\Service\Contact\DemandeHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
@@ -102,7 +103,10 @@ class ContactController extends AbstractController
         return $this->renderDemande($request, $form);
     }
 
-    private function renderDemande(Request $request, \Symfony\Component\Form\FormInterface $form): Response
+    /**
+     * @param FormInterface<Demande> $form
+     */
+    private function renderDemande(Request $request, FormInterface $form): Response
     {
         if ('contact' !== $request->attributes->get('_route')) {
             return $this->render('public/contact/formulaire.html.twig', ['form' => $form]);

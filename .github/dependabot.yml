@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # Dependances PHP (back.md section 7.2, A06 "Composants vulnerables").
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      symfony:
+        patterns:
+          - "symfony/*"
+
+  # Dependance d'accessibilite (axe-core, back.md section 18).
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+
+  # Actions GitHub utilisees par .github/workflows/ci.yaml.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+
+  # Image de base PHP-FPM (docker/php/Dockerfile).
+  - package-ecosystem: "docker"
+    directory: "/docker/php"
+    schedule:
+      interval: "monthly"
