@@ -102,6 +102,12 @@ jobs:
       - name: Symfony bin/console lint:container
         run: php bin/console lint:container --env=test
 
+      - name: Compilation des feuilles de style (Sass)
+        # base.html.twig appelle asset('styles/app.scss') sur toutes les pages : sans cette
+        # etape, symfonycasts/sass-bundle n'a encore rien compile dans var/sass/ et le premier
+        # rendu de page (tests Fonctionnels et Bout-en-bout) echoue avec une erreur 500.
+        run: php bin/console sass:build --env=test
+
       - name: Attente de la disponibilite de MySQL
         run: |
           for i in $(seq 1 30); do
